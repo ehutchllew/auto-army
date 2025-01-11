@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	ebiten.SetWindowSize(1920, 1080)
+	ebiten.SetWindowSize(1920, 1280)
 	ebiten.SetWindowTitle("Auto Army")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
