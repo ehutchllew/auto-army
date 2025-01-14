@@ -1,5 +1,5 @@
 { "columns":4,
- "image":"..\/images\/Tilemap_Elevation.png",
+ "image":"..\/terrain\/tilemap_elevation.png",
  "imageheight":512,
  "imagewidth":256,
  "margin":0,

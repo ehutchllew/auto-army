@@ -1,5 +1,5 @@
 { "columns":10,
- "image":"..\/images\/Tilemap_Flat.png",
+ "image":"..\/terrain\/tilemap_flat.png",
  "imageheight":256,
  "imagewidth":640,
  "margin":0,

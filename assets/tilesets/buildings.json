@@ -14,37 +14,37 @@
  "tiles":[
         {
          "id":0,
-         "image":"..\/images\/castle_blue.png",
+         "image":"..\/buildings\/castle_blue.png",
          "imageheight":256,
          "imagewidth":320
         }, 
         {
          "id":1,
-         "image":"..\/images\/house_blue.png",
+         "image":"..\/buildings\/house_blue.png",
          "imageheight":192,
          "imagewidth":128
         }, 
         {
          "id":2,
-         "image":"..\/images\/tower_blue.png",
+         "image":"..\/buildings\/tower_blue.png",
          "imageheight":256,
          "imagewidth":128
         }, 
         {
          "id":3,
-         "image":"..\/images\/Castle_Red.png",
+         "image":"..\/buildings\/castle_red.png",
          "imageheight":256,
          "imagewidth":320
         }, 
         {
          "id":4,
-         "image":"..\/images\/House_Red.png",
+         "image":"..\/buildings\/house_red.png",
          "imageheight":192,
          "imagewidth":128
         }, 
         {
          "id":5,
-         "image":"..\/images\/Tower_Red.png",
+         "image":"..\/buildings\/tower_red.png",
          "imageheight":256,
          "imagewidth":128
         }],
