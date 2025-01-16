@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"image"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/ehutchllew/autoarmy/constants"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type Tileset interface {
-	Img(id uint8) *ebiten.Image
+	Img(id constants.ID) *ebiten.Image
 }
 
 type UniformTileset struct {
@@ -58,8 +62,6 @@ func (d *DynamicTileset) Img(id constants.ID) *ebiten.Image {
 	return d.imgs[realId]
 }
 
-// TODO: test to see if this rawMsg approach works to dynamically
-// set the tileset type
 func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 	content, err := os.ReadFile(tp)
 	if err != nil {
@@ -67,11 +69,29 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 	}
 
 	var rawMsg map[string]interface{}
-	if err := json.Unmarshal(content, rawMsg); err != nil {
+	if err := json.Unmarshal(content, &rawMsg); err != nil {
 		return nil, fmt.Errorf("Error unmarshalling tileset: %w", err)
 	}
 
-	fmt.Printf("JSON: %+v", rawMsg)
+	var tileset Tileset
+	if rawMsg["columns"] != 0.0 {
+		imgPath := filepath.Clean(rawMsg["image"].(string))
+		imgPath = strings.ReplaceAll(imgPath, "\\", "/")
+		imgPath = strings.TrimPrefix(imgPath, "../")
+		imgPath = filepath.Join("assets/", imgPath)
+		img, _, err := ebitenutil.NewImageFromFile(imgPath)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to create image from file at path: (%s) -- Error: %w", imgPath, err)
+		}
 
-	return nil, nil
+		tileset = &UniformTileset{
+			columns: uint8(rawMsg["columns"].(float64)),
+			gid:     gid,
+			img:     img,
+		}
+	} else {
+		// TODO: Do DynamicTilesetJson
+	}
+
+	return &tileset, nil
 }
