@@ -24,6 +24,12 @@ type UniformTileset struct {
 	img     *ebiten.Image
 }
 
+// NOTE: I think i can delete this
+type UniformTilesetJson struct {
+	Columns uint8  `json:"columns"`
+	Path    string `json:"image"`
+}
+
 type DynamicTileset struct {
 	gid  constants.ID
 	imgs []*ebiten.Image
@@ -43,8 +49,9 @@ type DynamicTilesetTile struct {
 	imageWidth  uint16
 }
 
-type GenericTileset[T UniformTileset | DynamicTileset] struct {
-	Data T
+// NOTE: I think i can delete this
+type DynamicTilesetJson struct {
+	Tiles []*DynamicTilesJson `json:"tiles"`
 }
 
 func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
@@ -70,7 +77,7 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 		return nil, fmt.Errorf("Error reading file at path: (%s) -- Error: %w", tp, err)
 	}
 
-	var rawMsg map[string]interface{}
+	var rawMsg map[string]any
 	if err := json.Unmarshal(content, &rawMsg); err != nil {
 		return nil, fmt.Errorf("Error unmarshalling tileset: %w", err)
 	}
@@ -94,7 +101,7 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 	} else {
 		imgs := make([]*ebiten.Image, 0)
 		// TODO: figure out best way to type the tiles
-		for _, tile := range rawMsg["tiles"] {
+		for _, tile := range (rawMsg["tiles"]).([]DynamicTilesetTile) {
 			imgPath := filepath.Clean(tile.image)
 			imgPath = strings.ReplaceAll(imgPath, "\\", "/")
 			imgPath = strings.TrimPrefix(imgPath, "../")
