@@ -11,7 +11,6 @@ import (
 	"github.com/ehutchllew/autoarmy/constants"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type Tileset interface {
@@ -24,7 +23,6 @@ type UniformTileset struct {
 	img     *ebiten.Image
 }
 
-// NOTE: I think i can delete this
 type UniformTilesetJson struct {
 	Columns uint8  `json:"columns"`
 	Path    string `json:"image"`
@@ -35,13 +33,6 @@ type DynamicTileset struct {
 	imgs []*ebiten.Image
 }
 
-type DynamicTilesJson struct {
-	Height uint16       `json:"imageheight"`
-	Id     constants.ID `json:"id"`
-	Path   string       `json:"image"`
-	Width  uint16       `json:"imageWidth"`
-}
-
 type DynamicTilesetTile struct {
 	id          constants.ID
 	image       string
@@ -49,9 +40,12 @@ type DynamicTilesetTile struct {
 	imageWidth  uint16
 }
 
-// NOTE: I think i can delete this
 type DynamicTilesetJson struct {
-	Tiles []*DynamicTilesJson `json:"tiles"`
+	Tiles []*DynamicTilesetTile `json:"tiles"`
+}
+
+type GenericTileset[T UniformTilesetJson | DynamicTilesetJson] struct {
+	Data *T
 }
 
 func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
@@ -83,8 +77,18 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 	}
 
 	var tileset Tileset
-	if rawMsg["columns"] != 0.0 {
-		imgPath := filepath.Clean(rawMsg["image"].(string))
+	isValidTileset := false
+	if v, ok := rawMsg["columns"]; ok && v != 0.0 {
+		isValidTileset = true
+
+		uT := &GenericTileset[UniformTilesetJson]{
+			Data: &UniformTilesetJson{
+				Columns: uint8(rawMsg["columns"].(float64)),
+				Path:    rawMsg["image"].(string),
+			},
+		}
+
+		imgPath := filepath.Clean(uT.Data.Path)
 		imgPath = strings.ReplaceAll(imgPath, "\\", "/")
 		imgPath = strings.TrimPrefix(imgPath, "../")
 		imgPath = filepath.Join("assets/", imgPath)
@@ -98,10 +102,30 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 			gid:     gid,
 			img:     img,
 		}
-	} else {
+	}
+
+	if tiles, ok := rawMsg["tiles"]; ok {
+		isValidTileset = true
+
+		tilesSlice := tiles.([]interface{})
+
+		convertedTiles := make([]*DynamicTilesetTile, len(tilesSlice))
+
+		for i, t := range tilesSlice {
+			tileMap := t.(map[string]interface{})
+			convertedTiles[i] = &DynamicTilesetTile{
+				image: tileMap["image"].(string),
+			}
+		}
+
+		dT := &GenericTileset[DynamicTilesetJson]{
+			Data: &DynamicTilesetJson{
+				Tiles: convertedTiles,
+			},
+		}
+
 		imgs := make([]*ebiten.Image, 0)
-		// TODO: figure out best way to type the tiles
-		for _, tile := range (rawMsg["tiles"]).([]DynamicTilesetTile) {
+		for _, tile := range dT.Data.Tiles {
 			imgPath := filepath.Clean(tile.image)
 			imgPath = strings.ReplaceAll(imgPath, "\\", "/")
 			imgPath = strings.TrimPrefix(imgPath, "../")
@@ -118,6 +142,10 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 			gid:  gid,
 			imgs: imgs,
 		}
+	}
+
+	if !isValidTileset {
+		return nil, fmt.Errorf("Parsed JSON file at path: (%s) is not a valid tileset", tp)
 	}
 
 	return &tileset, nil
