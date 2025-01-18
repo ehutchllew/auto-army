@@ -15,6 +15,7 @@ type GameScene struct {
 	tilesets    []*assets.Tileset
 }
 
+// TODO: now with tileMapJson and tilesets we can draw this
 func (g *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 	// opts := ebiten.DrawImageOptions{}

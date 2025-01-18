@@ -24,11 +24,6 @@ type UniformTileset struct {
 	img     *ebiten.Image
 }
 
-type UniformTilesetJson struct {
-	Columns uint8  `json:"columns"`
-	Path    string `json:"image"`
-}
-
 type DynamicTileset struct {
 	gid  constants.ID
 	imgs []*ebiten.Image
@@ -41,8 +36,15 @@ type DynamicTilesJson struct {
 	Width  uint16       `json:"imageWidth"`
 }
 
-type DynamicTilesetJson struct {
-	Tiles []*DynamicTilesJson `json:"tiles"`
+type DynamicTilesetTile struct {
+	id          constants.ID
+	image       string
+	imageHeight uint16
+	imageWidth  uint16
+}
+
+type GenericTileset[T UniformTileset | DynamicTileset] struct {
+	Data T
 }
 
 func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
@@ -81,7 +83,7 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 		imgPath = filepath.Join("assets/", imgPath)
 		img, _, err := ebitenutil.NewImageFromFile(imgPath)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to create image from file at path: (%s) -- Error: %w", imgPath, err)
+			return nil, fmt.Errorf("UniformTileset: Unable to create image from file at path: (%s) -- Error: %w", imgPath, err)
 		}
 
 		tileset = &UniformTileset{
@@ -90,7 +92,25 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 			img:     img,
 		}
 	} else {
-		// TODO: Do DynamicTilesetJson
+		imgs := make([]*ebiten.Image, 0)
+		// TODO: figure out best way to type the tiles
+		for _, tile := range rawMsg["tiles"] {
+			imgPath := filepath.Clean(tile.image)
+			imgPath = strings.ReplaceAll(imgPath, "\\", "/")
+			imgPath = strings.TrimPrefix(imgPath, "../")
+			imgPath = filepath.Join("assets/", imgPath)
+			img, _, err := ebitenutil.NewImageFromFile(imgPath)
+			if err != nil {
+				return nil, fmt.Errorf("DynamicTileset: Unable to create image from file at path: (%s) -- Error: %w", imgPath, err)
+			}
+
+			imgs = append(imgs, img)
+		}
+
+		tileset = &DynamicTileset{
+			gid:  gid,
+			imgs: imgs,
+		}
 	}
 
 	return &tileset, nil

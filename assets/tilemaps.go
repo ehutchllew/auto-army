@@ -25,10 +25,6 @@ type TileMapJson struct {
 	Tilesets []TileMapTilesetJson `json:"tilesets"`
 }
 
-// TODO: think about best way to generate the tilesets for a specific tilemap
-// Should we have a specific "Map" struct for each map type that holds onto
-// its tilemap and tilesets?
-
 func (t *TileMapJson) GenTilesets() ([]*Tileset, error) {
 	ts := make([]*Tileset, 0)
 	for _, tilesetData := range t.Tilesets {
