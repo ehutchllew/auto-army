@@ -62,6 +62,7 @@ func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
 
 func (d *DynamicTileset) Img(id constants.ID) *ebiten.Image {
 	realId := id - d.gid
+
 	return d.imgs[realId]
 }
 

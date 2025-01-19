@@ -6,6 +6,7 @@ import (
 
 	"github.com/ehutchllew/autoarmy/assets"
 	"github.com/ehutchllew/autoarmy/cameras"
+	"github.com/ehutchllew/autoarmy/constants"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -15,13 +16,11 @@ type GameScene struct {
 	tilesets    []*assets.Tileset
 }
 
-// TODO: now with tileMapJson and tilesets we can draw this
 func (g *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
-	// opts := ebiten.DrawImageOptions{}
-	//
-	// g.drawMap(screen, &opts)
+	opts := ebiten.DrawImageOptions{}
 
+	g.drawMap(screen, &opts)
 }
 
 func (g *GameScene) FirstLoad() {
@@ -55,27 +54,33 @@ func (g *GameScene) Update() SceneId {
 	panic("unimplemented")
 }
 
-// func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
-// 	for layerI, layer := range g.tileMapJson.Layers {
-// 		for tileI, tile := range layer.Data {
-// 			if tileI == 0 {
-// 				continue
-// 			}
-//
-// 			// Get tile index on tileset
-// 			x := tileI % layer.Width
-// 			y := tileI / layer.Width
-//
-// 			x *= constants.Tilesize
-// 			y *= constants.Tilesize
-//
-// 			tileset := g.tileMapJson.Tilesets[layerI]
-//
-// 			opts.GeoM.Translate(float64(x), float64(y))
-// 			opts.GeoM.Translate(0.0, -(float64(tileset)))
-// 		}
-// 	}
-// }
+func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
+	for layerI, layer := range g.tileMapJson.Layers {
+		for tileI, tileId := range layer.Data {
+			if tileId == 0 {
+				continue
+			}
+
+			// Get tile index on tileset
+			x := tileI % layer.Width
+			y := tileI / layer.Width
+
+			x *= constants.Tilesize
+			y *= constants.Tilesize
+
+			tileset := g.tilesets[layerI]
+
+			img := (*tileset).Img(constants.ID(tileId))
+
+			opts.GeoM.Translate(float64(x), float64(y))
+			opts.GeoM.Translate(0.0, -(float64(img.Bounds().Dy()) + constants.Tilesize))
+
+			screen.DrawImage(img, opts)
+
+			opts.GeoM.Reset()
+		}
+	}
+}
 
 func NewGameScene() *GameScene {
 	return &GameScene{}
