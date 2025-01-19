@@ -13,9 +13,17 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+type TilesetType uint8
+
+const (
+	UniformType TilesetType = iota
+	DynamicType
+)
+
 type Tileset interface {
 	Gid() constants.ID
 	Img(id constants.ID) *ebiten.Image
+	Type() TilesetType
 }
 
 type UniformTileset struct {
@@ -65,6 +73,10 @@ func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
 	).(*ebiten.Image)
 }
 
+func (u *UniformTileset) Type() TilesetType {
+	return UniformType
+}
+
 func (d *DynamicTileset) Gid() constants.ID {
 	return d.gid
 }
@@ -73,6 +85,10 @@ func (d *DynamicTileset) Img(id constants.ID) *ebiten.Image {
 	realId := id - d.gid
 
 	return d.imgs[realId]
+}
+
+func (d *DynamicTileset) Type() TilesetType {
+	return DynamicType
 }
 
 func NewTileset(tp string, gid constants.ID) (Tileset, error) {

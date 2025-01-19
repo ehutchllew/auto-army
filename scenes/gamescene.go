@@ -34,6 +34,7 @@ func (g *GameScene) FirstLoad() {
 		log.Fatalf("Unable to load tilesets: %v", err)
 	}
 
+	g.camera = cameras.NewCamera(0.0, 0.0)
 	g.tileMapJson = tileMapJson
 	g.tilesets = tilesets
 }
@@ -68,6 +69,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 					t := g.tilesets[i]
 					if tileId >= int(t.Gid()) {
 						tileset = t
+						break
 					}
 				}
 			}
@@ -82,7 +84,11 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			img := tileset.Img(constants.ID(tileId))
 
 			opts.GeoM.Translate(float64(x), float64(y))
-			opts.GeoM.Translate(0.0, -(float64(img.Bounds().Dy()) + constants.Tilesize))
+
+			if tileset.Type() == assets.DynamicType {
+				opts.GeoM.Translate(0.0, -(float64(img.Bounds().Dy()))+constants.Tilesize)
+			}
+			opts.GeoM.Translate(g.camera.X, g.camera.Y)
 
 			screen.DrawImage(img, opts)
 
