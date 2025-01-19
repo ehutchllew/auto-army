@@ -14,6 +14,7 @@ import (
 )
 
 type Tileset interface {
+	Gid() constants.ID
 	Img(id constants.ID) *ebiten.Image
 }
 
@@ -48,6 +49,10 @@ type GenericTileset[T UniformTilesetJson | DynamicTilesetJson] struct {
 	Data *T
 }
 
+func (u *UniformTileset) Gid() constants.ID {
+	return u.gid
+}
+
 func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
 	// The ID that gets passed in is the global ID used by the `map*.json`. To get the real ID of the actual image from its associated tileset we need to subtract the "firstGid" of the tilemap tileset from the passed in global ID.
 
@@ -60,13 +65,17 @@ func (u *UniformTileset) Img(id constants.ID) *ebiten.Image {
 	).(*ebiten.Image)
 }
 
+func (d *DynamicTileset) Gid() constants.ID {
+	return d.gid
+}
+
 func (d *DynamicTileset) Img(id constants.ID) *ebiten.Image {
 	realId := id - d.gid
 
 	return d.imgs[realId]
 }
 
-func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
+func NewTileset(tp string, gid constants.ID) (Tileset, error) {
 	content, err := os.ReadFile(tp)
 	if err != nil {
 		return nil, fmt.Errorf("Error reading file at path: (%s) -- Error: %w", tp, err)
@@ -149,5 +158,5 @@ func NewTileset(tp string, gid constants.ID) (*Tileset, error) {
 		return nil, fmt.Errorf("Parsed JSON file at path: (%s) is not a valid tileset", tp)
 	}
 
-	return &tileset, nil
+	return tileset, nil
 }

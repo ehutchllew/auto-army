@@ -25,8 +25,8 @@ type TileMapJson struct {
 	Tilesets []TileMapTilesetJson `json:"tilesets"`
 }
 
-func (t *TileMapJson) GenTilesets() ([]*Tileset, error) {
-	ts := make([]*Tileset, 0)
+func (t *TileMapJson) GenTilesets() ([]Tileset, error) {
+	ts := make([]Tileset, 0)
 	for _, tilesetData := range t.Tilesets {
 		tilesetPath := path.Join("assets/maps/", tilesetData.Source)
 		tileset, err := NewTileset(tilesetPath, constants.ID(tilesetData.Firstgid))

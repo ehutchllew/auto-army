@@ -13,7 +13,7 @@ import (
 type GameScene struct {
 	camera      *cameras.Camera
 	tileMapJson *assets.TileMapJson
-	tilesets    []*assets.Tileset
+	tilesets    []assets.Tileset
 }
 
 func (g *GameScene) Draw(screen *ebiten.Image) {
@@ -55,10 +55,21 @@ func (g *GameScene) Update() SceneId {
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
-	for layerI, layer := range g.tileMapJson.Layers {
+	for _, layer := range g.tileMapJson.Layers {
+		var tileset assets.Tileset
 		for tileI, tileId := range layer.Data {
 			if tileId == 0 {
 				continue
+			}
+
+			// Get associated tileset if tileset is nil
+			if tileset == nil {
+				for i := len(g.tilesets) - 1; i >= 0; i-- {
+					t := g.tilesets[i]
+					if tileId >= int(t.Gid()) {
+						tileset = t
+					}
+				}
 			}
 
 			// Get tile index on tileset
@@ -68,9 +79,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			x *= constants.Tilesize
 			y *= constants.Tilesize
 
-			tileset := g.tilesets[layerI]
-
-			img := (*tileset).Img(constants.ID(tileId))
+			img := tileset.Img(constants.ID(tileId))
 
 			opts.GeoM.Translate(float64(x), float64(y))
 			opts.GeoM.Translate(0.0, -(float64(img.Bounds().Dy()) + constants.Tilesize))
