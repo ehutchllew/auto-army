@@ -58,6 +58,9 @@ type GenericTileset[T UniformTilesetJson | DynamicTilesetJson] struct {
 	Data *T
 }
 
+// TODO: Should remove Gid & Type from these Tileset types
+// They should just be "asset" data for each tile. Could probably
+// attach these to an "object" struct
 func (u *UniformTileset) Gid() constants.ID {
 	return u.gid
 }

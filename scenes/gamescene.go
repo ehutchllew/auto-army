@@ -95,7 +95,12 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 				* tileset and not just the image.
 				 */
 				if dT.Collider == nil {
-					collider := image.Rect(img.Bounds().Min.X, img.Bounds().Min.Y, img.Bounds().Dx(), img.Bounds().Dy())
+					collider := image.Rect(
+						x,
+						y-(img.Bounds().Dy()+constants.Tilesize),
+						x-img.Bounds().Dx(),
+						x-img.Bounds().Dy(),
+					)
 					colliderP := &collider
 					dT.Collider = colliderP
 
