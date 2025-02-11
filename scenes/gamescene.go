@@ -126,6 +126,21 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 			opts.GeoM.Reset()
 		}
+
+		tileset = nil
+		for _, obj := range layer.Objects {
+			if tileset == nil {
+				for i := len(g.tilesets) - 1; i >= 0; i-- {
+					t := g.tilesets[i]
+					if obj.Gid >= t.Gid() {
+						tileset = t
+						break
+					}
+				}
+			}
+
+			// Assign object and its properties to a struct
+		}
 	}
 }
 

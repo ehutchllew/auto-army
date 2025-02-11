@@ -46,8 +46,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -76,8 +77,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -94,8 +96,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -124,8 +127,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -142,8 +146,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -172,8 +177,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -190,8 +196,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -220,8 +227,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -238,8 +246,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -268,8 +277,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -286,8 +296,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -316,8 +327,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -334,8 +346,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -364,8 +377,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2169,8 +2183,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2199,8 +2214,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2217,8 +2233,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2247,8 +2264,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2265,8 +2283,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2295,8 +2314,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2313,8 +2333,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2343,8 +2364,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2361,8 +2383,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2391,8 +2414,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2409,8 +2433,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2439,8 +2464,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -2458,8 +2484,9 @@
                  "properties":[
                         {
                          "name":"ascend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"south"
+                         "value":"SOUTH"
                         }, 
                         {
                          "name":"blocked",
@@ -2488,8 +2515,9 @@
                         }, 
                         {
                          "name":"descend",
+                         "propertytype":"DIRECTION",
                          "type":"string",
-                         "value":"north"
+                         "value":"NORTH"
                         }],
                  "rotation":0,
                  "type":"Stairs",
@@ -4331,7 +4359,7 @@
                  "gid":41,
                  "height":256,
                  "id":2,
-                 "name":"castle",
+                 "name":"",
                  "properties":[
                         {
                          "name":"capacity",
@@ -4340,13 +4368,19 @@
                         }, 
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"blue"
+                         "value":"BLUE"
                         }, 
                         {
                          "name":"isSpawn",
                          "type":"bool",
                          "value":true
+                        }, 
+                        {
+                         "name":"length",
+                         "type":"int",
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4363,8 +4397,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"blue"
+                         "value":"BLUE"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4381,8 +4416,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"blue"
+                         "value":"BLUE"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4399,8 +4435,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"blue"
+                         "value":"BLUE"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4417,8 +4454,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"blue"
+                         "value":"BLUE"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4431,7 +4469,7 @@
                  "gid":44,
                  "height":256,
                  "id":9,
-                 "name":"castle",
+                 "name":"",
                  "properties":[
                         {
                          "name":"capacity",
@@ -4440,13 +4478,19 @@
                         }, 
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"red"
+                         "value":"RED"
                         }, 
                         {
                          "name":"isSpawn",
                          "type":"bool",
                          "value":true
+                        }, 
+                        {
+                         "name":"length",
+                         "type":"int",
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4463,8 +4507,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"red"
+                         "value":"RED"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4481,8 +4526,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"red"
+                         "value":"RED"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4499,8 +4545,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"red"
+                         "value":"RED"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4517,8 +4564,9 @@
                  "properties":[
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"red"
+                         "value":"RED"
                         }],
                  "rotation":0,
                  "type":"MainBase",
@@ -4540,13 +4588,19 @@
                         }, 
                         {
                          "name":"captured_by",
+                         "propertytype":"PLAYER",
                          "type":"string",
-                         "value":"none"
+                         "value":"NONE"
                         }, 
                         {
                          "name":"isSpawn",
                          "type":"bool",
                          "value":false
+                        }, 
+                        {
+                         "name":"length",
+                         "type":"int",
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"Tower",
@@ -4562,7 +4616,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":202,
+ "nextobjectid":208,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.0",

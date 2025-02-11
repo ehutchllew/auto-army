@@ -8,11 +8,26 @@ import (
 	"github.com/ehutchllew/autoarmy/constants"
 )
 
+type TileMapObjectPropsJson struct {
+	Name  string `json:"name"`
+	Type  string `json:"type"`
+	Value any    `json:"value"`
+}
+
+type TileMapObjectsJson struct {
+	Height     int                      `json:"height"`
+	Gid        constants.ID             `json:"gid"`
+	Name       string                   `json:"name"`
+	Properties []TileMapObjectPropsJson `json:"properties"`
+	Width      int                      `json:"width"`
+}
+
 type TileMapLayerJson struct {
-	Data   []int  `json:"data"`
-	Height int    `json:"height"`
-	Name   string `json:"name"`
-	Width  int    `json:"width"`
+	Data    []int                `json:"data,omitempty"`
+	Height  int                  `json:"height"`
+	Name    string               `json:"name"`
+	Objects []TileMapObjectsJson `json:"objects,omitempty"`
+	Width   int                  `json:"width"`
 }
 
 type TileMapTilesetJson struct {

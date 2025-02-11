@@ -1,4 +1,4 @@
-1. Need to dynamically render `tileLayer` vs `objectgroup` in the `map1.json` file.
+1. Need to dynamically render `tileLayer` vs `objectgroup` in the `map1.json` file (look at GenericTileset).
 2. Each tile or object should contain info about its:
 	a. image
 	b. height
@@ -8,3 +8,4 @@
 	f. transformation?
 	g. collider?
 3. Need to think about how entitites/objects moving on the map interact with each tile.
+4. Perhaps at the initial draw phase, iterate over entire map, assign special structs to tiles where needed and then assign these special structs to a map/dict with (x,y) as key. If a body is moving across the map it checks against this map/dict to determine if it should interact (blocked, movement differential, attackable, etc.)
