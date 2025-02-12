@@ -15,6 +15,10 @@ type Building struct {
 	Occupancy  uint8
 }
 
+func (b *Building) Coords() (float64, float64) {
+	return b.X, b.Y
+}
+
 func (b *Building) Type() constants.LayerObjectType {
 	return b.Class
 }

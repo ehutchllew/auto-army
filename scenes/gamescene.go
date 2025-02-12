@@ -17,6 +17,7 @@ import (
 
 type GameScene struct {
 	camera      *cameras.Camera
+	objects     map[string]entities.IEntity
 	tileMapJson *assets.TileMapJson
 	tilesets    []assets.Tileset
 }
@@ -143,10 +144,13 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			}
 
 			// Assign object and its properties to a struct
-			entity, err := assignObject(obj)
+			object, err := assignObject(obj)
 			if err != nil {
 				log.Fatalf("Unable to unpack object :: Error: \n %+v", err)
 			}
+
+			x, y := object.Coords()
+			g.objects[fmt.Sprintf("%f,%f", x, y)] = object
 		}
 	}
 }
