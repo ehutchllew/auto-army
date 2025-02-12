@@ -6,9 +6,15 @@ import (
 )
 
 type Building struct {
+	components.Coordinates
+	components.Dimensions
 	components.LayerObject
 	Capacity   uint8
 	CapturedBy constants.PLAYER
 	IsSpawn    bool
-	Length     uint8
+	Occupancy  uint8
+}
+
+func (b *Building) Type() constants.LayerObjectType {
+	return b.Class
 }

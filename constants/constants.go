@@ -16,10 +16,17 @@ const (
 	YELLOW PLAYER = "YELLOW"
 )
 
+type LayerObjectName string
+
+const (
+	MAIN_BASE LayerObjectName = "MainBase"
+	TOWER     LayerObjectName = "Tower"
+)
+
+// These should correlate to entities
 type LayerObjectType string
 
 const (
-	MAIN_BASE LayerObjectType = "MainBase"
-	STAIRS    LayerObjectType = "Stairs"
-	TOWER     LayerObjectType = "Tower"
+	BUILDING LayerObjectType = "Building"
+	STAIRS   LayerObjectType = "Stairs"
 )

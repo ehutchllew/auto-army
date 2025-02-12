@@ -1,13 +1,16 @@
 package scenes
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"log"
 
 	"github.com/ehutchllew/autoarmy/assets"
 	"github.com/ehutchllew/autoarmy/cameras"
+	"github.com/ehutchllew/autoarmy/components"
 	"github.com/ehutchllew/autoarmy/constants"
+	"github.com/ehutchllew/autoarmy/entities"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
@@ -140,12 +143,70 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			}
 
 			// Assign object and its properties to a struct
+			entity, err := assignObject(obj)
+			if err != nil {
+				log.Fatalf("Unable to unpack object :: Error: \n %+v", err)
+			}
 		}
 	}
 }
 
 func NewGameScene() *GameScene {
 	return &GameScene{}
+}
+
+func assignObject(obj assets.TileMapObjectsJson) (entities.IEntity, error) {
+	coercedType := constants.LayerObjectType(obj.Type)
+	objProps := make(map[string]any)
+
+	for _, p := range obj.Properties {
+		objProps[p.Name] = p.Value
+	}
+
+	switch coercedType {
+	case constants.BUILDING:
+		capacity, ok := objProps["capacity"]
+		if !ok {
+			return nil, fmt.Errorf("(capacity) not found on object:\n%+v", obj)
+		}
+
+		capBy, ok := objProps["captured_by"]
+		if !ok {
+			return nil, fmt.Errorf("(captured_by) not found on object:\n%+v", obj)
+		}
+
+		isSpawn, ok := objProps["is_spawn"]
+		if !ok {
+			return nil, fmt.Errorf("(is_spawn) not found on object:\n%+v", obj)
+		}
+
+		occ, ok := objProps["occupancy"]
+		if !ok {
+			return nil, fmt.Errorf("(occupancy) not found on object:\n%+v", obj)
+		}
+
+		return &entities.Building{
+			Coordinates: components.Coordinates{
+				X: obj.X,
+				Y: obj.Y,
+			},
+			Dimensions: components.Dimensions{
+				Height: obj.Height,
+				Width:  obj.Width,
+			},
+			LayerObject: components.LayerObject{
+				Class: coercedType,
+				Gid:   obj.Gid,
+				Name:  constants.LayerObjectName(obj.Name),
+			},
+			Capacity:   capacity.(uint8),
+			CapturedBy: capBy.(constants.PLAYER),
+			IsSpawn:    isSpawn.(bool),
+			Occupancy:  occ.(uint8),
+		}, nil
+	}
+
+	return nil, fmt.Errorf("Unsupported object type: (%v)", obj.Type)
 }
 
 var _ Scene = (*GameScene)(nil)

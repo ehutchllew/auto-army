@@ -4359,7 +4359,7 @@
                  "gid":41,
                  "height":256,
                  "id":2,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"capacity",
@@ -4373,17 +4373,17 @@
                          "value":"BLUE"
                         }, 
                         {
-                         "name":"isSpawn",
+                         "name":"is_spawn",
                          "type":"bool",
                          "value":true
                         }, 
                         {
-                         "name":"length",
+                         "name":"occupancy",
                          "type":"int",
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":320,
                  "x":256,
@@ -4393,7 +4393,7 @@
                  "gid":43,
                  "height":256,
                  "id":3,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4402,7 +4402,7 @@
                          "value":"BLUE"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":576,
@@ -4412,7 +4412,7 @@
                  "gid":43,
                  "height":256,
                  "id":4,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4421,7 +4421,7 @@
                          "value":"BLUE"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":128,
@@ -4431,7 +4431,7 @@
                  "gid":42,
                  "height":192,
                  "id":7,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4440,7 +4440,7 @@
                          "value":"BLUE"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":192,
@@ -4450,7 +4450,7 @@
                  "gid":42,
                  "height":192,
                  "id":8,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4459,7 +4459,7 @@
                          "value":"BLUE"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":512,
@@ -4469,7 +4469,7 @@
                  "gid":44,
                  "height":256,
                  "id":9,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"capacity",
@@ -4483,17 +4483,17 @@
                          "value":"RED"
                         }, 
                         {
-                         "name":"isSpawn",
+                         "name":"is_spawn",
                          "type":"bool",
                          "value":true
                         }, 
                         {
-                         "name":"length",
+                         "name":"occupancy",
                          "type":"int",
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":320,
                  "x":1344,
@@ -4503,7 +4503,7 @@
                  "gid":46,
                  "height":256,
                  "id":14,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4512,7 +4512,7 @@
                          "value":"RED"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":1216,
@@ -4522,7 +4522,7 @@
                  "gid":46,
                  "height":256,
                  "id":15,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4531,7 +4531,7 @@
                          "value":"RED"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":1664,
@@ -4541,7 +4541,7 @@
                  "gid":45,
                  "height":192,
                  "id":16,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4550,7 +4550,7 @@
                          "value":"RED"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":1280,
@@ -4560,7 +4560,7 @@
                  "gid":45,
                  "height":192,
                  "id":17,
-                 "name":"",
+                 "name":"MainBase",
                  "properties":[
                         {
                          "name":"captured_by",
@@ -4569,7 +4569,7 @@
                          "value":"RED"
                         }],
                  "rotation":0,
-                 "type":"MainBase",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":1600,
@@ -4579,7 +4579,7 @@
                  "gid":48,
                  "height":256,
                  "id":201,
-                 "name":"tower",
+                 "name":"Tower",
                  "properties":[
                         {
                          "name":"capacity",
@@ -4593,17 +4593,17 @@
                          "value":"NONE"
                         }, 
                         {
-                         "name":"isSpawn",
+                         "name":"is_spawn",
                          "type":"bool",
                          "value":false
                         }, 
                         {
-                         "name":"length",
+                         "name":"occupancy",
                          "type":"int",
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"Tower",
+                 "type":"Building",
                  "visible":true,
                  "width":128,
                  "x":896,

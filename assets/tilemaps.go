@@ -19,7 +19,10 @@ type TileMapObjectsJson struct {
 	Gid        constants.ID             `json:"gid"`
 	Name       string                   `json:"name"`
 	Properties []TileMapObjectPropsJson `json:"properties"`
+	Type       string                   `json:"type"`
 	Width      int                      `json:"width"`
+	X          float64                  `json:"x"`
+	Y          float64                  `json:"y"`
 }
 
 type TileMapLayerJson struct {
