@@ -151,6 +151,8 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 			x, y := object.Coords()
 			g.objects[fmt.Sprintf("%f,%f", x, y)] = object
+
+			// TODO: transform / assign transform? The image then draw on screen
 		}
 	}
 }

@@ -1,6 +1,9 @@
 package components
 
-import "github.com/ehutchllew/autoarmy/constants"
+import (
+	"github.com/ehutchllew/autoarmy/constants"
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type Coordinates struct {
 	X, Y float64
@@ -16,3 +19,9 @@ type LayerObject struct {
 	Name  constants.LayerObjectName
 	Class constants.LayerObjectType
 }
+
+type Renderable struct {
+	Image *ebiten.Image
+}
+
+// TODO: Add a Transformable struct?
