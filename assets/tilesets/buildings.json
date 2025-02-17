@@ -1,54 +1,166 @@
-{ "columns":0,
- "grid":
+{
+  "columns": 0,
+  "grid": {
+    "height": 1,
+    "orientation": "orthogonal",
+    "width": 1
+  },
+  "margin": 0,
+  "name": "buildings",
+  "spacing": 0,
+  "tilecount": 8,
+  "tiledversion": "1.11.0",
+  "tileheight": 256,
+  "tiles": [
     {
-     "height":1,
-     "orientation":"orthogonal",
-     "width":1
+      "id": 0,
+      "image": "../buildings/castle_blue.png",
+      "imageheight": 256,
+      "imagewidth": 320,
+      "objectgroup": {
+        "draworder": "index",
+        "id": 2,
+        "name": "",
+        "objects": [
+          {
+            "height": 0,
+            "id": 3,
+            "name": "",
+            "polygon": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 0.526315789473685,
+                "y": 121.842105263158
+              },
+              {
+                "x": 53.421052631579,
+                "y": 144.473684210526
+              },
+              {
+                "x": 191.578947368421,
+                "y": 145.263157894737
+              },
+              {
+                "x": 245,
+                "y": 121.315789473684
+              },
+              {
+                "x": 245.526315789474,
+                "y": 0.26315789473685
+              }
+            ],
+            "rotation": 0,
+            "type": "",
+            "visible": true,
+            "width": 0,
+            "x": 37.1052631578947,
+            "y": 92.1052631578947
+          }
+        ],
+        "opacity": 1,
+        "type": "objectgroup",
+        "visible": true,
+        "x": 0,
+        "y": 0
+      }
     },
- "margin":0,
- "name":"buildings",
- "spacing":0,
- "tilecount":6,
- "tiledversion":"1.11.0",
- "tileheight":256,
- "tiles":[
-        {
-         "id":0,
-         "image":"..\/buildings\/castle_blue.png",
-         "imageheight":256,
-         "imagewidth":320
-        }, 
-        {
-         "id":1,
-         "image":"..\/buildings\/house_blue.png",
-         "imageheight":192,
-         "imagewidth":128
-        }, 
-        {
-         "id":2,
-         "image":"..\/buildings\/tower_blue.png",
-         "imageheight":256,
-         "imagewidth":128
-        }, 
-        {
-         "id":3,
-         "image":"..\/buildings\/castle_red.png",
-         "imageheight":256,
-         "imagewidth":320
-        }, 
-        {
-         "id":4,
-         "image":"..\/buildings\/house_red.png",
-         "imageheight":192,
-         "imagewidth":128
-        }, 
-        {
-         "id":5,
-         "image":"..\/buildings\/tower_red.png",
-         "imageheight":256,
-         "imagewidth":128
-        }],
- "tilewidth":320,
- "type":"tileset",
- "version":"1.10"
+    {
+      "id": 1,
+      "image": "../buildings/house_blue.png",
+      "imageheight": 192,
+      "imagewidth": 128
+    },
+    {
+      "id": 2,
+      "image": "../buildings/tower_blue.png",
+      "imageheight": 256,
+      "imagewidth": 128
+    },
+    {
+      "id": 3,
+      "image": "../buildings/castle_red.png",
+      "imageheight": 256,
+      "imagewidth": 320,
+      "objectgroup": {
+        "draworder": "index",
+        "id": 2,
+        "name": "",
+        "objects": [
+          {
+            "height": 0,
+            "id": 1,
+            "name": "",
+            "polygon": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 0.526316,
+                "y": 121.842
+              },
+              {
+                "x": 53.4211,
+                "y": 144.474
+              },
+              {
+                "x": 191.579,
+                "y": 145.263
+              },
+              {
+                "x": 245,
+                "y": 121.316
+              },
+              {
+                "x": 245.526,
+                "y": 0.263158
+              }
+            ],
+            "rotation": 0,
+            "type": "",
+            "visible": true,
+            "width": 0,
+            "x": 37.1052631578947,
+            "y": 92.11
+          }
+        ],
+        "opacity": 1,
+        "type": "objectgroup",
+        "visible": true,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 4,
+      "image": "../buildings/house_red.png",
+      "imageheight": 192,
+      "imagewidth": 128
+    },
+    {
+      "id": 5,
+      "image": "../buildings/tower_red.png",
+      "imageheight": 256,
+      "imagewidth": 128
+    },
+    {
+      "id": 6,
+      "image": "../buildings/tower_yellow.png",
+      "imageheight": 256,
+      "imagewidth": 128
+    },
+    {
+      "id": 7,
+      "image": "../buildings/tower_gray.png",
+      "imageheight": 256,
+      "imagewidth": 128
+    }
+  ],
+  "tilewidth": 320,
+  "type": "tileset",
+  "version": "1.10"
 }
+

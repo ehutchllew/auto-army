@@ -41,6 +41,7 @@ func (g *GameScene) FirstLoad() {
 	}
 
 	g.camera = cameras.NewCamera(0.0, 0.0)
+	g.objects = make(map[string]entities.IEntity)
 	g.tileMapJson = tileMapJson
 	g.tilesets = tilesets
 }
@@ -115,6 +116,8 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 			screen.DrawImage(img, opts)
 
+			opts.GeoM.Reset()
+
 			if dT != nil {
 				vector.StrokeRect(
 					screen,
@@ -128,7 +131,6 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 				)
 			}
 
-			opts.GeoM.Reset()
 		}
 
 		tileset = nil
@@ -144,8 +146,9 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			}
 
 			// Assign object and its properties to a struct
-			object, err := assignObject(obj)
+			object, err := assignObject(obj, tileset)
 			if err != nil {
+				continue
 				log.Fatalf("Unable to unpack object :: Error: \n %+v", err)
 			}
 
@@ -153,6 +156,13 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			g.objects[fmt.Sprintf("%f,%f", x, y)] = object
 
 			// TODO: transform / assign transform? The image then draw on screen
+			opts.GeoM.Translate(object.Coords())
+			opts.GeoM.Translate(0.0, -(float64(object.Img().Bounds().Dy()))+constants.Tilesize)
+			opts.GeoM.Translate(g.camera.X, g.camera.Y)
+
+			screen.DrawImage(object.Img(), opts)
+
+			opts.GeoM.Reset()
 		}
 	}
 }
@@ -161,7 +171,7 @@ func NewGameScene() *GameScene {
 	return &GameScene{}
 }
 
-func assignObject(obj assets.TileMapObjectsJson) (entities.IEntity, error) {
+func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entities.IEntity, error) {
 	coercedType := constants.LayerObjectType(obj.Type)
 	objProps := make(map[string]any)
 
@@ -203,12 +213,16 @@ func assignObject(obj assets.TileMapObjectsJson) (entities.IEntity, error) {
 			LayerObject: components.LayerObject{
 				Class: coercedType,
 				Gid:   obj.Gid,
+				Id:    obj.Id,
 				Name:  constants.LayerObjectName(obj.Name),
 			},
-			Capacity:   capacity.(uint8),
-			CapturedBy: capBy.(constants.PLAYER),
-			IsSpawn:    isSpawn.(bool),
-			Occupancy:  occ.(uint8),
+			Capacity:   uint8(capacity.(float64)),
+			CapturedBy: constants.PLAYER(capBy.(string)),
+			Renderable: components.Renderable{
+				Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+			},
+			IsSpawn:   isSpawn.(bool),
+			Occupancy: uint8(occ.(float64)),
 		}, nil
 	}
 
