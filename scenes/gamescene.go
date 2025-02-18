@@ -62,15 +62,22 @@ func (g *GameScene) Update() SceneId {
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
+	// Loop over all layers in the map file
 	for _, layer := range g.tileMapJson.Layers {
+		// Initialize a tileset that will contain our image data once found
 		var tileset assets.Tileset
+		// tileI equals index of the actual data in the slice
+		// tileId equals the ID of the tile on its tileset file
 		for tileI, tileId := range layer.Data {
+			// If there is no tile, then skip this iteration
 			if tileId == 0 {
 				continue
 			}
 
 			// Get associated tileset if tileset is nil
 			if tileset == nil {
+				// Loop backwards since we want to match the tile GID with
+				// the highest possible `firstgid` of the tilesets
 				for i := len(g.tilesets) - 1; i >= 0; i-- {
 					t := g.tilesets[i]
 					if tileId >= int(t.Gid()) {
@@ -80,27 +87,35 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 				}
 			}
 
-			// Get tile index on tileset
+			// Get tile coordinates on tileset image
 			x := tileI % layer.Width
 			y := tileI / layer.Width
 
+			// Multiply by the Tilesize our game uses
 			x *= constants.Tilesize
 			y *= constants.Tilesize
 
 			img := tileset.Img(constants.ID(tileId))
 
+			// Begin translating the image coordinates for the tile image
 			opts.GeoM.Translate(float64(x), float64(y))
-
 			opts.GeoM.Translate(g.camera.X, g.camera.Y)
 
+			// Draw the actual tile image with the given subimage and
+			// the translated options we calculated above
 			screen.DrawImage(img, opts)
 
+			// Reset the GeoM options so we can use it again below
 			opts.GeoM.Reset()
 		}
 
+		// Set to nil so we can re-do the tileset finding logic
 		tileset = nil
+		// Work backwards to adhere to ebiten's z-index rendering
+		// i.e. images on top should be layered/rendered last
 		for i := len(layer.Objects) - 1; i >= 0; i-- {
 			obj := layer.Objects[i]
+
 			if tileset == nil {
 				for i := len(g.tilesets) - 1; i >= 0; i-- {
 					t := g.tilesets[i]
@@ -115,21 +130,20 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			object, err := assignObject(obj, tileset)
 			if err != nil {
 				continue
+				// TODO: re-implement this once we've accounted for all
+				// object types (Buildings, Stairs, Cliffs, etc.)
 				log.Fatalf("Unable to unpack object :: Error: \n %+v", err)
 			}
 
 			x, y := object.Coords()
+
 			g.objects[fmt.Sprintf("%f,%f", x, y)] = object
 
-			// TODO: transform / assign transform? The image then draw on screen
-			opts.GeoM.Translate(object.Coords())
-			opts.GeoM.Translate(0.0, -(float64(object.Img().Bounds().Dy()))+constants.Tilesize)
-			opts.GeoM.Translate(g.camera.X, g.camera.Y)
+			opts.GeoM.Translate(object.TransCoords())
 
 			screen.DrawImage(object.Img(), opts)
 
 			opts.GeoM.Reset()
-
 		}
 	}
 }
@@ -162,6 +176,11 @@ func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entiti
 			return nil, err
 		}
 
+		img := tileset.Img(obj.Gid)
+
+		tx, ty := obj.X, obj.Y
+		ty -= float64(img.Bounds().Dy())
+
 		return &entities.Building{
 			Coordinates: components.Coordinates{
 				X: obj.X,
@@ -176,6 +195,10 @@ func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entiti
 				Gid:   obj.Gid,
 				Id:    obj.Id,
 				Name:  constants.LayerObjectName(obj.Name),
+			},
+			Transformable: components.Transformable{
+				Tx: tx,
+				Ty: ty,
 			},
 			Capacity:   capacity,
 			CapturedBy: constants.PLAYER(capBy),
