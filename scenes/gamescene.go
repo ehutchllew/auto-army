@@ -11,6 +11,7 @@ import (
 	"github.com/ehutchllew/autoarmy/components"
 	"github.com/ehutchllew/autoarmy/constants"
 	"github.com/ehutchllew/autoarmy/entities"
+	"github.com/ehutchllew/autoarmy/utils"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
@@ -181,24 +182,18 @@ func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entiti
 
 	switch coercedType {
 	case constants.BUILDING:
-		capacity, ok := objProps["capacity"]
-		if !ok {
-			return nil, fmt.Errorf("(capacity) not found on object:\n%+v", obj)
+		capacity, err := utils.SafeConvertUint8(objProps["capacity"])
+		if err != nil {
+			return nil, err
 		}
 
-		capBy, ok := objProps["captured_by"]
-		if !ok {
-			return nil, fmt.Errorf("(captured_by) not found on object:\n%+v", obj)
-		}
+		capBy := utils.SafeConvertString(objProps["captured_by"])
 
-		isSpawn, ok := objProps["is_spawn"]
-		if !ok {
-			return nil, fmt.Errorf("(is_spawn) not found on object:\n%+v", obj)
-		}
+		isSpawn := utils.SafeConvertBool(objProps["is_spawn"])
 
-		occ, ok := objProps["occupancy"]
-		if !ok {
-			return nil, fmt.Errorf("(occupancy) not found on object:\n%+v", obj)
+		occ, err := utils.SafeConvertUint8(objProps["occupancy"])
+		if err != nil {
+			return nil, err
 		}
 
 		return &entities.Building{
@@ -216,13 +211,13 @@ func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entiti
 				Id:    obj.Id,
 				Name:  constants.LayerObjectName(obj.Name),
 			},
-			Capacity:   uint8(capacity.(float64)),
-			CapturedBy: constants.PLAYER(capBy.(string)),
+			Capacity:   capacity,
+			CapturedBy: constants.PLAYER(capBy),
 			Renderable: components.Renderable{
 				Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
 			},
-			IsSpawn:   isSpawn.(bool),
-			Occupancy: uint8(occ.(float64)),
+			IsSpawn:   isSpawn,
+			Occupancy: occ,
 		}, nil
 	}
 
