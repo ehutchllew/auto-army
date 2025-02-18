@@ -2,7 +2,6 @@ package scenes
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/ehutchllew/autoarmy/entities"
 	"github.com/ehutchllew/autoarmy/utils"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 type GameScene struct {
@@ -93,49 +91,16 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 			opts.GeoM.Translate(float64(x), float64(y))
 
-			var dT *assets.DynamicTileset
-			if tileset.Type() == assets.DynamicType {
-				dT = tileset.(*assets.DynamicTileset)
-				/*
-				* TODO: Figure out best way to attach a translation vector to the actual
-				* tileset and not just the image.
-				 */
-				if dT.Collider == nil {
-					collider := image.Rect(
-						x,
-						y-(img.Bounds().Dy()+constants.Tilesize),
-						x-img.Bounds().Dx(),
-						x-img.Bounds().Dy(),
-					)
-					colliderP := &collider
-					dT.Collider = colliderP
-
-				}
-				opts.GeoM.Translate(0.0, -(float64(img.Bounds().Dy()))+constants.Tilesize)
-			}
 			opts.GeoM.Translate(g.camera.X, g.camera.Y)
 
 			screen.DrawImage(img, opts)
 
 			opts.GeoM.Reset()
-
-			if dT != nil {
-				vector.StrokeRect(
-					screen,
-					float32(dT.Collider.Min.X),
-					float32(dT.Collider.Min.Y),
-					float32(dT.Collider.Dx()),
-					float32(dT.Collider.Dy()),
-					1.0,
-					color.RGBA{255, 0, 0, 255},
-					true,
-				)
-			}
-
 		}
 
 		tileset = nil
-		for _, obj := range layer.Objects {
+		for i := len(layer.Objects) - 1; i >= 0; i-- {
+			obj := layer.Objects[i]
 			if tileset == nil {
 				for i := len(g.tilesets) - 1; i >= 0; i-- {
 					t := g.tilesets[i]
@@ -164,6 +129,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			screen.DrawImage(object.Img(), opts)
 
 			opts.GeoM.Reset()
+
 		}
 	}
 }
