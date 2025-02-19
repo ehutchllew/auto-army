@@ -37,5 +37,6 @@ type LayerObjectType string
 
 const (
 	BUILDING LayerObjectType = "Building"
+	CLIFF    LayerObjectType = "Cliff"
 	STAIRS   LayerObjectType = "Stairs"
 )

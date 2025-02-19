@@ -159,6 +159,8 @@ func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entiti
 	switch coercedType {
 	case constants.BUILDING:
 		return assignBuilding(obj, tileset)
+	case constants.CLIFF:
+		return assignCliff(obj, tileset)
 	case constants.STAIRS:
 		return assignStairs(obj, tileset)
 	}
@@ -218,6 +220,33 @@ func assignBuilding(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*ent
 		CapturedBy: constants.Player(capBy),
 		IsSpawn:    isSpawn,
 		Occupancy:  occ,
+	}, nil
+}
+
+func assignCliff(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entities.Cliff, error) {
+	img := tileset.Img(obj.Gid)
+
+	tx, ty := obj.X, obj.Y
+	ty -= float64(img.Bounds().Dy())
+
+	return &entities.Cliff{
+		Coordinates: components.Coordinates{
+			X: obj.X,
+			Y: obj.Y,
+		},
+		LayerObject: components.LayerObject{
+			Class: constants.LayerObjectType(obj.Type),
+			Gid:   obj.Gid,
+			Id:    obj.Id,
+			Name:  constants.LayerObjectName(obj.Name),
+		},
+		Renderable: components.Renderable{
+			Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+		},
+		Transformable: components.Transformable{
+			Tx: tx,
+			Ty: ty,
+		},
 	}, nil
 }
 
