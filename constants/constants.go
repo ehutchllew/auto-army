@@ -6,14 +6,23 @@ const (
 
 type ID uint16
 
-type PLAYER string
+type CardinalDirection string
 
 const (
-	BLUE   PLAYER = "BLUE"
-	GREEN  PLAYER = "GREEN"
-	NONE   PLAYER = "NONE"
-	RED    PLAYER = "RED"
-	YELLOW PLAYER = "YELLOW"
+	NORTH CardinalDirection = "NORTH"
+	EAST  CardinalDirection = "EAST"
+	SOUTH CardinalDirection = "SOUTH"
+	WEST  CardinalDirection = "WEST"
+)
+
+type Player string
+
+const (
+	BLUE   Player = "BLUE"
+	GREEN  Player = "GREEN"
+	NONE   Player = "NONE"
+	RED    Player = "RED"
+	YELLOW Player = "YELLOW"
 )
 
 type LayerObjectName string

@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"errors"
 	"fmt"
 	"image/color"
 	"log"
@@ -154,63 +155,115 @@ func NewGameScene() *GameScene {
 
 func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entities.IEntity, error) {
 	coercedType := constants.LayerObjectType(obj.Type)
+
+	switch coercedType {
+	case constants.BUILDING:
+		return assignBuilding(obj, tileset)
+	case constants.STAIRS:
+		return assignStairs(obj, tileset)
+	}
+
+	return nil, fmt.Errorf("Unsupported object type: (%v)", obj.Type)
+}
+
+func assignBuilding(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entities.Building, error) {
 	objProps := make(map[string]any)
 
 	for _, p := range obj.Properties {
 		objProps[p.Name] = p.Value
 	}
 
-	switch coercedType {
-	case constants.BUILDING:
-		capacity, err := utils.SafeConvertUint8(objProps["capacity"])
-		if err != nil {
-			return nil, err
-		}
-
-		capBy := utils.SafeConvertString(objProps["captured_by"])
-
-		isSpawn := utils.SafeConvertBool(objProps["is_spawn"])
-
-		occ, err := utils.SafeConvertUint8(objProps["occupancy"])
-		if err != nil {
-			return nil, err
-		}
-
-		img := tileset.Img(obj.Gid)
-
-		tx, ty := obj.X, obj.Y
-		ty -= float64(img.Bounds().Dy())
-
-		return &entities.Building{
-			Coordinates: components.Coordinates{
-				X: obj.X,
-				Y: obj.Y,
-			},
-			Dimensions: components.Dimensions{
-				Height: obj.Height,
-				Width:  obj.Width,
-			},
-			LayerObject: components.LayerObject{
-				Class: coercedType,
-				Gid:   obj.Gid,
-				Id:    obj.Id,
-				Name:  constants.LayerObjectName(obj.Name),
-			},
-			Transformable: components.Transformable{
-				Tx: tx,
-				Ty: ty,
-			},
-			Capacity:   capacity,
-			CapturedBy: constants.PLAYER(capBy),
-			Renderable: components.Renderable{
-				Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
-			},
-			IsSpawn:   isSpawn,
-			Occupancy: occ,
-		}, nil
+	capacity, err := utils.SafeConvertUint8(objProps["capacity"])
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, fmt.Errorf("Unsupported object type: (%v)", obj.Type)
+	capBy := utils.SafeConvertString(objProps["captured_by"])
+
+	isSpawn := utils.SafeConvertBool(objProps["is_spawn"])
+
+	occ, err := utils.SafeConvertUint8(objProps["occupancy"])
+	if err != nil {
+		return nil, err
+	}
+
+	img := tileset.Img(obj.Gid)
+
+	tx, ty := obj.X, obj.Y
+	ty -= float64(img.Bounds().Dy())
+
+	return &entities.Building{
+		Coordinates: components.Coordinates{
+			X: obj.X,
+			Y: obj.Y,
+		},
+		Dimensions: components.Dimensions{
+			Height: obj.Height,
+			Width:  obj.Width,
+		},
+		LayerObject: components.LayerObject{
+			Class: constants.LayerObjectType(obj.Type),
+			Gid:   obj.Gid,
+			Id:    obj.Id,
+			Name:  constants.LayerObjectName(obj.Name),
+		},
+		Renderable: components.Renderable{
+			Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+		},
+		Transformable: components.Transformable{
+			Tx: tx,
+			Ty: ty,
+		},
+		Capacity:   capacity,
+		CapturedBy: constants.Player(capBy),
+		IsSpawn:    isSpawn,
+		Occupancy:  occ,
+	}, nil
+}
+
+func assignStairs(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entities.Stairs, error) {
+	objProps := make(map[string]any)
+
+	for _, p := range obj.Properties {
+		objProps[p.Name] = p.Value
+	}
+
+	ascend := utils.SafeConvertString(objProps["ascend"])
+	if ascend == "" {
+		return nil, errors.New("Stairs object is missing `ascend` property")
+	}
+
+	descend := utils.SafeConvertString(objProps["descend"])
+	if descend == "" {
+		return nil, errors.New("Stairs object is missing `descend` property")
+	}
+
+	img := tileset.Img(obj.Gid)
+
+	tx, ty := obj.X, obj.Y
+	ty -= float64(img.Bounds().Dy())
+
+	return &entities.Stairs{
+		Coordinates: components.Coordinates{
+			X: obj.X,
+			Y: obj.Y,
+		},
+		LayerObject: components.LayerObject{
+			Class: constants.LayerObjectType(obj.Type),
+			Gid:   obj.Gid,
+			Id:    obj.Id,
+			Name:  constants.LayerObjectName(obj.Name),
+		},
+		Renderable: components.Renderable{
+			Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+		},
+		Transformable: components.Transformable{
+			Tx: tx,
+			Ty: ty,
+		},
+		Ascend:  constants.CardinalDirection(ascend),
+		Descend: constants.CardinalDirection(descend),
+	}, nil
 }
 
 var _ Scene = (*GameScene)(nil)
