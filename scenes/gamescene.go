@@ -130,10 +130,9 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			// Assign object and its properties to a struct
 			object, err := assignObject(obj, tileset)
 			if err != nil {
+				// FIXME: #3 in `todo.txt` (convert to tile layer)
+				fmt.Errorf("Unable to unpack object :: Error: \n %w", err)
 				continue
-				// TODO: re-implement this once we've accounted for all
-				// object types (Buildings, Stairs, Cliffs, etc.)
-				log.Fatalf("Unable to unpack object :: Error: \n %+v", err)
 			}
 
 			x, y := object.Coords()
