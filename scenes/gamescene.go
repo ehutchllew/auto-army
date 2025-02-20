@@ -14,8 +14,8 @@ import (
 	"github.com/ehutchllew/autoarmy/entities"
 	"github.com/ehutchllew/autoarmy/utils"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 type GameScene struct {
@@ -162,23 +162,44 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 			screen.DrawImage(object.Img(), opts)
 
-			// Check if building has occupancy & capacity, then display floating window
+			opts.GeoM.Reset()
+
+			// Check if building has occupancy & capacity, then display banner "O/C"
 			if object.Type() == constants.BUILDING {
 				coObj := object.(*entities.Building)
 				if coObj.IsSpawn {
 					tx, ty := object.TransCoords()
-					vector.DrawFilledRect(screen,
-						float32(tx+float64(object.Img().Bounds().Dx())/2-50),
-						float32(ty+(ty*.025)),
-						100,
-						33,
-						color.RGBA{0, 0, 0, 175},
-						false,
-					)
+					scaleAmount := 0.75
+					opts.GeoM.Scale(scaleAmount, scaleAmount)
+					opts.GeoM.Translate(tx+float64(object.Img().Bounds().Dx())/2, ty)
+					switch coObj.CapturedBy {
+					case constants.BLUE:
+						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_blue.png")
+						if err != nil {
+							fmt.Errorf("Unable to parse image: %v", err)
+						}
+						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+						screen.DrawImage(capBanner, opts)
+					case constants.RED:
+						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_red.png")
+						if err != nil {
+							fmt.Errorf("Unable to parse image: %v", err)
+						}
+						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+						screen.DrawImage(capBanner, opts)
+					default:
+						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_gray.png")
+						if err != nil {
+							fmt.Errorf("Unable to parse image: %v", err)
+						}
+						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+						screen.DrawImage(capBanner, opts)
+					}
 
 					textW, textH := text.Measure(fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, 0)
 					tOpts := &text.DrawOptions{}
-					tOpts.GeoM.Translate(tx+float64(object.Img().Bounds().Dx())/2-textW/2, ty+(ty*0.025)+(textH/4))
+					tOpts.GeoM.Translate(tx+float64(object.Img().Bounds().Dx())/2-textW/2, ty+(textH/4))
+					tOpts.ColorScale.Scale(0, 0, 0, 1)
 					text.Draw(screen, fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, tOpts)
 				}
 			}
