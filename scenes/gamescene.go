@@ -169,7 +169,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 				coObj := object.(*entities.Building)
 				if coObj.IsSpawn {
 					tx, ty := object.TransCoords()
-					scaleAmount := 0.75
+					scaleAmount := 0.80
 					opts.GeoM.Scale(scaleAmount, scaleAmount)
 					opts.GeoM.Translate(tx+float64(object.Img().Bounds().Dx())/2, ty)
 					switch coObj.CapturedBy {
