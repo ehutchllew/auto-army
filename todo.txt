@@ -1,4 +1,6 @@
-1. Need to think about how entitites/objects moving on the map interact with each tile.
-2. Think about abstracting the repetitive logic when creating each LayerObject entity (coords, dimensions, etc.)
-3. Convert the elevated terrain that is NOT of type Cliff to a normal tile layer instead of object layer.
-4. Perhaps at the initial draw phase, iterate over entire map, assign special structs to tiles where needed and then assign these special structs to a map/dict with (x,y) as key. If a body is moving across the map it checks against this map/dict to determine if it should interact (blocked, movement differential, attackable, etc.)
+1. Create floating window above spawners to indicate occupancy/capacity ratio.
+2. Need to have the initial map render on FirstLoad, but then subsequent Draw phases need to look at tile layer in the map but not the objects. Instead it should look at the gamestate object map as these will be changing.
+3. Need to think about how entitites/objects moving on the map interact with each tile.
+4. Think about abstracting the repetitive logic when creating each LayerObject entity (coords, dimensions, etc.)
+5. Convert the elevated terrain that is NOT of type Cliff to a normal tile layer instead of object layer.
+6. Perhaps at the initial draw phase, iterate over entire map, assign special structs to tiles where needed and then assign these special structs to a map/dict with (x,y) as key. If a body is moving across the map it checks against this map/dict to determine if it should interact (blocked, movement differential, attackable, etc.)

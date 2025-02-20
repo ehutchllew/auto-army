@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"image/color"
@@ -13,6 +14,8 @@ import (
 	"github.com/ehutchllew/autoarmy/entities"
 	"github.com/ehutchllew/autoarmy/utils"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 type GameScene struct {
@@ -22,6 +25,11 @@ type GameScene struct {
 	tilesets    []assets.Tileset
 }
 
+var (
+	fontSource *text.GoTextFaceSource
+	fontFace   *text.GoTextFace
+)
+
 func (g *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 	opts := ebiten.DrawImageOptions{}
@@ -30,6 +38,17 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 }
 
 func (g *GameScene) FirstLoad() {
+	s, err := text.NewGoTextFaceSource(bytes.NewReader(assets.DepartMono_otf))
+	if err != nil {
+		fmt.Errorf("Unable to generate font source: %v", err)
+	}
+
+	fontSource = s
+	fontFace = &text.GoTextFace{
+		Source: fontSource,
+		Size:   16,
+	}
+
 	tileMapJson, err := assets.NewTileMapJson("./assets/maps/map1.json")
 	if err != nil {
 		log.Fatalf("Unable to load Tilemap JSON: %v", err)
@@ -130,7 +149,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			// Assign object and its properties to a struct
 			object, err := assignObject(obj, tileset)
 			if err != nil {
-				// FIXME: #3 in `todo.txt` (convert to tile layer)
+				// FIXME: #4 in `todo.txt` (convert to tile layer)
 				fmt.Errorf("Unable to unpack object :: Error: \n %w", err)
 				continue
 			}
@@ -142,6 +161,27 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			opts.GeoM.Translate(object.TransCoords())
 
 			screen.DrawImage(object.Img(), opts)
+
+			// Check if building has occupancy & capacity, then display floating window
+			if object.Type() == constants.BUILDING {
+				coObj := object.(*entities.Building)
+				if coObj.IsSpawn {
+					tx, ty := object.TransCoords()
+					vector.DrawFilledRect(screen,
+						float32(tx+float64(object.Img().Bounds().Dx())/2-50),
+						float32(ty+(ty*.025)),
+						100,
+						33,
+						color.RGBA{0, 0, 0, 175},
+						false,
+					)
+
+					textW, textH := text.Measure(fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, 0)
+					tOpts := &text.DrawOptions{}
+					tOpts.GeoM.Translate(tx+float64(object.Img().Bounds().Dx())/2-textW/2, ty+(ty*0.025)+(textH/4))
+					text.Draw(screen, fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, tOpts)
+				}
+			}
 
 			opts.GeoM.Reset()
 		}
