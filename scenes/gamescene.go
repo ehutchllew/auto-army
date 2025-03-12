@@ -63,6 +63,7 @@ func (g *GameScene) FirstLoad() {
 	g.tileMapJson = tileMapJson
 	g.tilesets = tilesets
 	g.objects = g.firstLoadObjectState()
+	fmt.Printf("\nOBJS::%+v\n", g.objects)
 }
 
 func (g *GameScene) IsLoaded() bool {
@@ -82,10 +83,10 @@ func (g *GameScene) Update() SceneId {
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
+	// Initialize a tileset that will contain our image data once found
+	var tileset assets.Tileset
 	// Loop over all layers in the map file
 	for _, layer := range g.tileMapJson.Layers {
-		// Initialize a tileset that will contain our image data once found
-		var tileset assets.Tileset
 		// tileI equals index of the actual data in the slice
 		// tileId equals the ID of the tile on its tileset file
 		for tileI, tileId := range layer.Data {
@@ -128,58 +129,60 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			// Reset the GeoM options so we can use it again below
 			opts.GeoM.Reset()
 		}
-	}
 
-	// TODO: there's an issue with how the objects are stored
-	// Storing in a map does not retain the z-index of the layer that
-	// was previously done by rendering just based off of layer
-	// Loop over game state objects
-	for _, o := range g.objects {
-		opts.GeoM.Translate(o.TransCoords())
-		screen.DrawImage(o.Img(), opts)
-		opts.GeoM.Reset()
-
-		// Check if building has occupancy & capacity, then display banner "O/C"
-		if o.Type() == constants.BUILDING {
-			coObj := o.(*entities.Building)
-			if coObj.IsSpawn {
-				tx, ty := o.TransCoords()
-				scaleAmount := 0.80
-				opts.GeoM.Scale(scaleAmount, scaleAmount)
-				opts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2, ty)
-				switch coObj.CapturedBy {
-				case constants.BLUE:
-					capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_blue.png")
-					if err != nil {
-						fmt.Errorf("Unable to parse image: %v", err)
-					}
-					opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
-					screen.DrawImage(capBanner, opts)
-				case constants.RED:
-					capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_red.png")
-					if err != nil {
-						fmt.Errorf("Unable to parse image: %v", err)
-					}
-					opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
-					screen.DrawImage(capBanner, opts)
-				default:
-					capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_gray.png")
-					if err != nil {
-						fmt.Errorf("Unable to parse image: %v", err)
-					}
-					opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
-					screen.DrawImage(capBanner, opts)
-				}
-
-				textW, textH := text.Measure(fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, 0)
-				tOpts := &text.DrawOptions{}
-				tOpts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2-textW/2, ty+(textH/4))
-				tOpts.ColorScale.Scale(0, 0, 0, 1)
-				text.Draw(screen, fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, tOpts)
+		// Set to nil so we can re-do the tileset finding logic
+		tileset = nil
+		for _, obj := range layer.Objects {
+			o, ok := g.objects[fmt.Sprintf("%f,%f", obj.X, obj.Y)]
+			if !ok {
+				fmt.Println("RUHROH")
+				continue
 			}
-		}
+			opts.GeoM.Translate(o.TransCoords())
+			screen.DrawImage(o.Img(), opts)
+			opts.GeoM.Reset()
 
-		opts.GeoM.Reset()
+			// Check if building has occupancy & capacity, then display banner "O/C"
+			if o.Type() == constants.BUILDING {
+				coObj := o.(*entities.Building)
+				if coObj.IsSpawn {
+					tx, ty := o.TransCoords()
+					scaleAmount := 0.80
+					opts.GeoM.Scale(scaleAmount, scaleAmount)
+					opts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2, ty)
+					switch coObj.CapturedBy {
+					case constants.BLUE:
+						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_blue.png")
+						if err != nil {
+							fmt.Errorf("Unable to parse image: %v", err)
+						}
+						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+						screen.DrawImage(capBanner, opts)
+					case constants.RED:
+						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_red.png")
+						if err != nil {
+							fmt.Errorf("Unable to parse image: %v", err)
+						}
+						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+						screen.DrawImage(capBanner, opts)
+					default:
+						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_gray.png")
+						if err != nil {
+							fmt.Errorf("Unable to parse image: %v", err)
+						}
+						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+						screen.DrawImage(capBanner, opts)
+					}
+
+					textW, textH := text.Measure(fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, 0)
+					tOpts := &text.DrawOptions{}
+					tOpts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2-textW/2, ty+(textH/4))
+					tOpts.ColorScale.Scale(0, 0, 0, 1)
+					text.Draw(screen, fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, tOpts)
+				}
+			}
+			opts.GeoM.Reset()
+		}
 	}
 }
 
