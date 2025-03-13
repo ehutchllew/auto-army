@@ -40,7 +40,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 func (g *GameScene) FirstLoad() {
 	s, err := text.NewGoTextFaceSource(bytes.NewReader(assets.DepartMono_otf))
 	if err != nil {
-		fmt.Errorf("Unable to generate font source: %v", err)
+		fmt.Printf("Unable to generate font source: %v", err)
 	}
 
 	fontSource = s
@@ -83,10 +83,10 @@ func (g *GameScene) Update() SceneId {
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
-	// Initialize a tileset that will contain our image data once found
-	var tileset assets.Tileset
 	// Loop over all layers in the map file
 	for _, layer := range g.tileMapJson.Layers {
+		// Initialize a tileset that will contain our image data once found
+		var tileset assets.Tileset
 		// tileI equals index of the actual data in the slice
 		// tileId equals the ID of the tile on its tileset file
 		for tileI, tileId := range layer.Data {
@@ -130,13 +130,11 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			opts.GeoM.Reset()
 		}
 
-		// Set to nil so we can re-do the tileset finding logic
-		tileset = nil
-		for _, obj := range layer.Objects {
+		for i := len(layer.Objects) - 1; i >= 0; i-- {
+			obj := layer.Objects[i]
 			o, ok := g.objects[fmt.Sprintf("%f,%f", obj.X, obj.Y)]
 			if !ok {
-				fmt.Println("RUHROH")
-				continue
+				log.Fatal("Object not present in ObjectMap")
 			}
 			opts.GeoM.Translate(o.TransCoords())
 			screen.DrawImage(o.Img(), opts)
@@ -154,21 +152,21 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 					case constants.BLUE:
 						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_blue.png")
 						if err != nil {
-							fmt.Errorf("Unable to parse image: %v", err)
+							fmt.Printf("Unable to parse image: %v", err)
 						}
 						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
 						screen.DrawImage(capBanner, opts)
 					case constants.RED:
 						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_red.png")
 						if err != nil {
-							fmt.Errorf("Unable to parse image: %v", err)
+							fmt.Printf("Unable to parse image: %v", err)
 						}
 						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
 						screen.DrawImage(capBanner, opts)
 					default:
 						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_gray.png")
 						if err != nil {
-							fmt.Errorf("Unable to parse image: %v", err)
+							fmt.Printf("Unable to parse image: %v", err)
 						}
 						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
 						screen.DrawImage(capBanner, opts)
@@ -209,13 +207,14 @@ func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 			object, err := assignObject(obj, tileset)
 			if err != nil {
 				// FIXME: #4 in `todo.txt` (convert to tile layer)
-				fmt.Errorf("Unable to unpack object :: Error: \n %w", err)
+				fmt.Printf("Unable to unpack object :: Error: \n %w", err)
 				continue
 			}
 
 			x, y := object.Coords()
 
 			objects[fmt.Sprintf("%f,%f", x, y)] = object
+			fmt.Printf("OBJECTS %+v\n", objects)
 		}
 	}
 	return objects
