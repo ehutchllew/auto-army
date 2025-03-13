@@ -132,7 +132,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 		for i := len(layer.Objects) - 1; i >= 0; i-- {
 			obj := layer.Objects[i]
-			o, ok := g.objects[fmt.Sprintf("%f,%f", obj.X, obj.Y)]
+			o, ok := g.objects[fmt.Sprintf("%.0f,%.0f", obj.X, obj.Y)]
 			if !ok {
 				log.Fatal("Object not present in ObjectMap")
 			}
@@ -207,14 +207,13 @@ func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 			object, err := assignObject(obj, tileset)
 			if err != nil {
 				// FIXME: #4 in `todo.txt` (convert to tile layer)
-				fmt.Printf("Unable to unpack object :: Error: \n %w", err)
+				fmt.Printf("Unable to unpack object :: Error: \n %v", err)
 				continue
 			}
 
 			x, y := object.Coords()
 
-			objects[fmt.Sprintf("%f,%f", x, y)] = object
-			fmt.Printf("OBJECTS %+v\n", objects)
+			objects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 	}
 	return objects
