@@ -63,7 +63,6 @@ func (g *GameScene) FirstLoad() {
 	g.tileMapJson = tileMapJson
 	g.tilesets = tilesets
 	g.objects = g.firstLoadObjectState()
-	fmt.Printf("\nOBJS::%+v\n", g.objects)
 }
 
 func (g *GameScene) IsLoaded() bool {
@@ -134,7 +133,8 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			obj := layer.Objects[i]
 			o, ok := g.objects[fmt.Sprintf("%.0f,%.0f", obj.X, obj.Y)]
 			if !ok {
-				log.Fatal("Object not present in ObjectMap")
+				// NOTE: I Believe this is due to those elevated cliffs
+				continue
 			}
 			opts.GeoM.Translate(o.TransCoords())
 			screen.DrawImage(o.Img(), opts)
@@ -213,6 +213,7 @@ func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 
 			x, y := object.Coords()
 
+			fmt.Printf("\nObject Being Assigned: %+v\n", object)
 			objects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 	}
