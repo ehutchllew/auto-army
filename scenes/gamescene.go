@@ -215,7 +215,9 @@ func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 			x, y := object.Coords()
 			// FIXME: There's a bug here: since things are layered, two objects
 			// can have the same coordinates and this will overwrite any already
-			// existing object in the map.
+			// existing object in the map. ** Should I add layers as keys? This
+			// could work by having a prop of "totalLayers" to determine where
+			// to start extracting the objects from and work backwards.
 			objects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 	}

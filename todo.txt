@@ -2,3 +2,5 @@
 2. Need to think about how entitites/objects moving on the map interact with each tile.
 3. Think about abstracting the repetitive logic when creating each LayerObject entity (coords, dimensions, etc.) // still needed?
 4. Convert the elevated terrain that is NOT of type Cliff to a normal tile layer instead of object layer.
+5. Create a "layering" service that determines where moving pieces are (like soldiers), this can interact with
+the state object map to determine what things are interacting.
