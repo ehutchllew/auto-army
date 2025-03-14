@@ -186,8 +186,8 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 
 func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 	var objects = make(map[string]entities.IEntity)
-	var tileset assets.Tileset
 	for _, layer := range g.tileMapJson.Layers {
+		var tileset assets.Tileset
 		// Work backwards to adhere to ebiten's z-index rendering
 		// i.e. images on top should be layered/rendered last
 		for i := len(layer.Objects) - 1; i >= 0; i-- {

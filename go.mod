@@ -1,6 +1,6 @@
 module github.com/ehutchllew/autoarmy
 
-go 1.23.4
+go 1.24.1
 
 require github.com/hajimehoshi/ebiten/v2 v2.8.6
 
