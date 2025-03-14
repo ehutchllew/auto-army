@@ -213,8 +213,9 @@ func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 			}
 
 			x, y := object.Coords()
-
-			fmt.Printf("\nObject Being Assigned: %+v\n", object)
+			// FIXME: There's a bug here: since things are layered, two objects
+			// can have the same coordinates and this will overwrite any already
+			// existing object in the map.
 			objects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 	}
