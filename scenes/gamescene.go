@@ -187,6 +187,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 	var objects = make(map[string]entities.IEntity)
 	for _, layer := range g.tileMapJson.Layers {
+		// Need to define tileset within this scope to ensure it resets for each layer
 		var tileset assets.Tileset
 		// Work backwards to adhere to ebiten's z-index rendering
 		// i.e. images on top should be layered/rendered last
@@ -281,7 +282,7 @@ func assignBuilding(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*ent
 			Name:  constants.LayerObjectName(obj.Name),
 		},
 		Renderable: components.Renderable{
-			Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+			Image: tileset.Img(obj.Gid),
 		},
 		Transformable: components.Transformable{
 			Tx: tx,
@@ -312,7 +313,7 @@ func assignCliff(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entiti
 			Name:  constants.LayerObjectName(obj.Name),
 		},
 		Renderable: components.Renderable{
-			Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+			Image: tileset.Img(obj.Gid),
 		},
 		Transformable: components.Transformable{
 			Tx: tx,
