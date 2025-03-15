@@ -129,6 +129,9 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			opts.GeoM.Reset()
 		}
 
+		// FIXME: There's one issue here: within each "level" the objects get rendered at random z's
+		// since a map does not maintain insertion order. Could potentially have two data structs:
+		// a slice for determining z-index render order, and the map for dynamic lookup.
 		// Start at 1 for first layer and go up to and including last layer
 		for i := uint8(1); i <= g.objects.NumLayers; i++ {
 			objects := g.objects.Objects[i]
@@ -145,6 +148,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 func (g *GameScene) firstLoadObjectState() *LayerObjects {
 	var lo = &LayerObjects{
 		NumLayers: 0,
+		Objects:   make(map[uint8]map[string]entities.IEntity),
 	}
 	for _, layer := range g.tileMapJson.Layers {
 		lo.NumLayers = lo.NumLayers + 1
