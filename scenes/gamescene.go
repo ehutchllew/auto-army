@@ -18,6 +18,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
+// TODO: I Believe I need to change some data on the layers:
+// 1. Attach a z-index property that indicates at what "level" entities interact with each other
+// 2. Attach a render-index property that doesn't affect game mechanics, only 'draw' order
+// 3. Need a data struct for the render-indices and one for the z-indices
+//		a. Z-index struct would contain map of coordinate:object
+//		b. Render-index struct would just be index:slice
+
 type GameScene struct {
 	camera      *cameras.Camera
 	objects     *LayerObjects
@@ -246,7 +253,7 @@ func assignBuilding(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*ent
 			Name:  constants.LayerObjectName(obj.Name),
 		},
 		Renderable: components.Renderable{
-			Image: tileset.Img(obj.Gid),
+			Image: img,
 		},
 		Transformable: components.Transformable{
 			Tx: tx,
@@ -277,7 +284,7 @@ func assignCliff(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entiti
 			Name:  constants.LayerObjectName(obj.Name),
 		},
 		Renderable: components.Renderable{
-			Image: tileset.Img(obj.Gid),
+			Image: img,
 		},
 		Transformable: components.Transformable{
 			Tx: tx,
@@ -320,7 +327,7 @@ func assignStairs(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entit
 			Name:  constants.LayerObjectName(obj.Name),
 		},
 		Renderable: components.Renderable{
-			Image: tileset.Img(obj.Gid), // Looks like obj.Gid - tilset.Gid results in the actual PNG id
+			Image: img,
 		},
 		Transformable: components.Transformable{
 			Tx: tx,
