@@ -1,6 +1,9 @@
 package scenes
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/ehutchllew/autoarmy/entities"
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type SceneId uint
 
@@ -18,4 +21,9 @@ type Scene interface {
 	OnEnter()
 	OnExit()
 	Update() SceneId
+}
+
+type LayerObjects struct {
+	NumLayers uint8
+	Objects   map[uint8]map[string]entities.IEntity
 }

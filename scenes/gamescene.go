@@ -20,7 +20,7 @@ import (
 
 type GameScene struct {
 	camera      *cameras.Camera
-	objects     map[string]entities.IEntity
+	objects     *LayerObjects
 	tileMapJson *assets.TileMapJson
 	tilesets    []assets.Tileset
 }
@@ -129,69 +129,29 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 			opts.GeoM.Reset()
 		}
 
-		for i := len(layer.Objects) - 1; i >= 0; i-- {
-			obj := layer.Objects[i]
-			o, ok := g.objects[fmt.Sprintf("%.0f,%.0f", obj.X, obj.Y)]
-			if !ok {
-				// NOTE: I Believe this is due to those elevated cliffs
-				continue
+		// Start at 1 for first layer and go up to and including last layer
+		for i := uint8(1); i <= g.objects.NumLayers; i++ {
+			objects := g.objects.Objects[i]
+			for _, o := range objects {
+				opts.GeoM.Translate(o.TransCoords())
+				screen.DrawImage(o.Img(), opts)
+				opts.GeoM.Reset()
+				renderBuildingBanner(o, screen, opts)
 			}
-			opts.GeoM.Translate(o.TransCoords())
-			screen.DrawImage(o.Img(), opts)
-			opts.GeoM.Reset()
-
-			// Check if building has occupancy & capacity, then display banner "O/C"
-			if o.Type() == constants.BUILDING {
-				coObj := o.(*entities.Building)
-				if coObj.IsSpawn {
-					tx, ty := o.TransCoords()
-					scaleAmount := 0.80
-					opts.GeoM.Scale(scaleAmount, scaleAmount)
-					opts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2, ty)
-					switch coObj.CapturedBy {
-					case constants.BLUE:
-						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_blue.png")
-						if err != nil {
-							fmt.Printf("Unable to parse image: %v", err)
-						}
-						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
-						screen.DrawImage(capBanner, opts)
-					case constants.RED:
-						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_red.png")
-						if err != nil {
-							fmt.Printf("Unable to parse image: %v", err)
-						}
-						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
-						screen.DrawImage(capBanner, opts)
-					default:
-						capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_gray.png")
-						if err != nil {
-							fmt.Printf("Unable to parse image: %v", err)
-						}
-						opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
-						screen.DrawImage(capBanner, opts)
-					}
-
-					textW, textH := text.Measure(fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, 0)
-					tOpts := &text.DrawOptions{}
-					tOpts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2-textW/2, ty+(textH/4))
-					tOpts.ColorScale.Scale(0, 0, 0, 1)
-					text.Draw(screen, fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, tOpts)
-				}
-			}
-			opts.GeoM.Reset()
 		}
 	}
 }
 
-func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
-	var objects = make(map[string]entities.IEntity)
+func (g *GameScene) firstLoadObjectState() *LayerObjects {
+	var lo = &LayerObjects{
+		NumLayers: 0,
+	}
 	for _, layer := range g.tileMapJson.Layers {
+		lo.NumLayers = lo.NumLayers + 1
+		objects := make(map[string]entities.IEntity)
 		// Need to define tileset within this scope to ensure it resets for each layer
 		var tileset assets.Tileset
-		// Work backwards to adhere to ebiten's z-index rendering
-		// i.e. images on top should be layered/rendered last
-		for i := len(layer.Objects) - 1; i >= 0; i-- {
+		for i := 0; i < len(layer.Objects); i++ {
 			obj := layer.Objects[i]
 
 			if tileset == nil {
@@ -213,15 +173,12 @@ func (g *GameScene) firstLoadObjectState() map[string]entities.IEntity {
 			}
 
 			x, y := object.Coords()
-			// FIXME: There's a bug here: since things are layered, two objects
-			// can have the same coordinates and this will overwrite any already
-			// existing object in the map. ** Should I add layers as keys? This
-			// could work by having a prop of "totalLayers" to determine where
-			// to start extracting the objects from and work backwards.
 			objects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
+
+		lo.Objects[lo.NumLayers] = objects
 	}
-	return objects
+	return lo
 }
 
 func NewGameScene() *GameScene {
@@ -368,6 +325,49 @@ func assignStairs(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entit
 		Ascend:  constants.CardinalDirection(ascend),
 		Descend: constants.CardinalDirection(descend),
 	}, nil
+}
+
+func renderBuildingBanner(o entities.IEntity, screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
+	// Check if building has occupancy & capacity, then display banner "O/C"
+	if o.Type() == constants.BUILDING {
+		coObj := o.(*entities.Building)
+		if coObj.IsSpawn {
+			tx, ty := o.TransCoords()
+			scaleAmount := 0.80
+			opts.GeoM.Scale(scaleAmount, scaleAmount)
+			opts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2, ty)
+			switch coObj.CapturedBy {
+			case constants.BLUE:
+				capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_blue.png")
+				if err != nil {
+					fmt.Printf("Unable to parse image: %v", err)
+				}
+				opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+				screen.DrawImage(capBanner, opts)
+			case constants.RED:
+				capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_red.png")
+				if err != nil {
+					fmt.Printf("Unable to parse image: %v", err)
+				}
+				opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+				screen.DrawImage(capBanner, opts)
+			default:
+				capBanner, _, err := ebitenutil.NewImageFromFile("./assets/ui/ribbon_gray.png")
+				if err != nil {
+					fmt.Printf("Unable to parse image: %v", err)
+				}
+				opts.GeoM.Translate(-float64(capBanner.Bounds().Dx())*scaleAmount/2, 0.0)
+				screen.DrawImage(capBanner, opts)
+			}
+
+			textW, textH := text.Measure(fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, 0)
+			tOpts := &text.DrawOptions{}
+			tOpts.GeoM.Translate(tx+float64(o.Img().Bounds().Dx())/2-textW/2, ty+(textH/4))
+			tOpts.ColorScale.Scale(0, 0, 0, 1)
+			text.Draw(screen, fmt.Sprintf("%d/%d", coObj.Occupancy, coObj.Capacity), fontFace, tOpts)
+		}
+		opts.GeoM.Reset()
+	}
 }
 
 var _ Scene = (*GameScene)(nil)
