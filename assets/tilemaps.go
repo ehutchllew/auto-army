@@ -32,6 +32,7 @@ type TileMapLayerJson struct {
 	Name    string               `json:"name"`
 	Objects []TileMapObjectsJson `json:"objects,omitempty"`
 	Width   int                  `json:"width"`
+	ZIndex  string               `json:"class"`
 }
 
 type TileMapTilesetJson struct {

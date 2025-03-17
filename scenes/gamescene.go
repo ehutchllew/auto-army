@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"slices"
+	"strconv"
 
 	"github.com/ehutchllew/autoarmy/assets"
 	"github.com/ehutchllew/autoarmy/cameras"
@@ -26,10 +28,11 @@ import (
 //		b. Render-index struct would just be index:slice
 
 type GameScene struct {
-	camera      *cameras.Camera
-	objects     *LayerObjects
-	tileMapJson *assets.TileMapJson
-	tilesets    []assets.Tileset
+	camera          *cameras.Camera
+	renderIndexObjs *RenderIndexObjects
+	tileMapJson     *assets.TileMapJson
+	tilesets        []assets.Tileset
+	zIndexObjs      *ZIndexObjects
 }
 
 var (
@@ -69,7 +72,7 @@ func (g *GameScene) FirstLoad() {
 	g.camera = cameras.NewCamera(0.0, 0.0)
 	g.tileMapJson = tileMapJson
 	g.tilesets = tilesets
-	g.objects = g.firstLoadObjectState()
+	g.renderIndexObjs, g.zIndexObjs = g.firstLoadObjectState()
 }
 
 func (g *GameScene) IsLoaded() bool {
@@ -140,8 +143,8 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 		// since a map does not maintain insertion order. Could potentially have two data structs:
 		// a slice for determining z-index render order, and the map for dynamic lookup.
 		// Start at 1 for first layer and go up to and including last layer
-		for i := uint8(1); i <= g.objects.NumLayers; i++ {
-			objects := g.objects.Objects[i]
+		for i := uint8(1); i <= g.zIndexObjs.NumLayers; i++ {
+			objects := g.zIndexObjs.Objects[i]
 			for _, o := range objects {
 				opts.GeoM.Translate(o.TransCoords())
 				screen.DrawImage(o.Img(), opts)
@@ -152,17 +155,36 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 	}
 }
 
-func (g *GameScene) firstLoadObjectState() *LayerObjects {
-	var lo = &LayerObjects{
-		NumLayers: 0,
-		Objects:   make(map[uint8]map[string]entities.IEntity),
+func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects) {
+	layerZIndices := make([]uint8, len(g.tileMapJson.Layers))
+
+	var ri = &RenderIndexObjects{
+		Objects: make(map[uint8][]entities.IEntity),
 	}
+	var zi = &ZIndexObjects{
+		Objects: make(map[uint8]map[string]entities.IEntity),
+	}
+
 	for _, layer := range g.tileMapJson.Layers {
-		lo.NumLayers = lo.NumLayers + 1
-		objects := make(map[string]entities.IEntity)
+		z, err := strconv.ParseUint(layer.ZIndex, 10, 8)
+		if err != nil {
+			// NOTE: Potentially log fatal instead?
+			fmt.Printf("Error parsing Layer Z-Index: %v", err)
+		}
+		currentZ := uint8(z)
+		// We don't want dupes because we'll range over these values
+		// to access each associated key in the `Objects` map for
+		// rendering and/or mutating/updating.
+		if !slices.Contains(layerZIndices, currentZ) {
+			layerZIndices = append(layerZIndices, currentZ)
+		}
+
+		// These zObjects go in the ZIndexObjects struct
+		zObjects := make(map[string]entities.IEntity)
 		// Need to define tileset within this scope to ensure it resets for each layer
 		var tileset assets.Tileset
-		for i := 0; i < len(layer.Objects); i++ {
+		// Work backwards to ensure render order when adding objects to `ri`
+		for i := len(layer.Objects) - 1; i >= 0; i-- {
 			obj := layer.Objects[i]
 
 			if tileset == nil {
@@ -183,13 +205,21 @@ func (g *GameScene) firstLoadObjectState() *LayerObjects {
 				continue
 			}
 
+			ri.Objects[currentZ] = append(ri.Objects[currentZ], object)
+
 			x, y := object.Coords()
-			objects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
+			zObjects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 
-		lo.Objects[lo.NumLayers] = objects
+		// NOTE: If the `zi` struct already has the `currentZ` key then
+		// that means we have an issue.
+		if _, ok := zi.Objects[currentZ]; ok {
+			log.Fatalf("Z-Index key (%d) already exists in ZIndexObject instance", currentZ)
+		}
+
+		zi.Objects[currentZ] = zObjects
 	}
-	return lo
+	return ri, zi
 }
 
 func NewGameScene() *GameScene {

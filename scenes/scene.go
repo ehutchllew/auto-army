@@ -23,7 +23,12 @@ type Scene interface {
 	Update() SceneId
 }
 
-type LayerObjects struct {
-	NumLayers uint8
-	Objects   map[uint8]map[string]entities.IEntity
+type RenderIndexObjects struct {
+	LayerZIndices []uint8
+	Objects       map[uint8][]entities.IEntity
+}
+
+type ZIndexObjects struct {
+	LayerZIndices []uint8
+	Objects       map[uint8]map[string]entities.IEntity
 }
