@@ -206,13 +206,7 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 			zObjects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 
-		// TODO: Maybe move this down a scope to the inner for that way we can maybe access
-		// it like zi.Objects[currentZ][fmt.Sprintf("%.0f,%.0f", x, y)] = object
-		if existingOjbs, ok := zi.Objects[currentZ]; ok {
-
-		} else {
-			zi.Objects[currentZ] = zObjects
-		}
+		zi.Objects[currentZ] = zObjects
 
 	}
 	ri.LayerZIndices = layerZIndices
