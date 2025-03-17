@@ -20,13 +20,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
-// TODO: I Believe I need to change some data on the layers:
-// 1. Attach a z-index property that indicates at what "level" entities interact with each other
-// 2. Attach a render-index property that doesn't affect game mechanics, only 'draw' order
-// 3. Need a data struct for the render-indices and one for the z-indices
-//		a. Z-index struct would contain map of coordinate:object
-//		b. Render-index struct would just be index:slice
-
+// TODO: Look into if it's possible to convert `renderIndexObjs` to a more
+// general purpose renderable data struct -- i.e. tiles and objects
 type GameScene struct {
 	camera          *cameras.Camera
 	renderIndexObjs *RenderIndexObjects
@@ -143,8 +138,8 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 		// since a map does not maintain insertion order. Could potentially have two data structs:
 		// a slice for determining z-index render order, and the map for dynamic lookup.
 		// Start at 1 for first layer and go up to and including last layer
-		for i := uint8(1); i <= g.zIndexObjs.NumLayers; i++ {
-			objects := g.zIndexObjs.Objects[i]
+		for i := 0; i < len(g.renderIndexObjs.LayerZIndices)-1; i++ {
+			objects := g.renderIndexObjs.Objects[uint8(i)]
 			for _, o := range objects {
 				opts.GeoM.Translate(o.TransCoords())
 				screen.DrawImage(o.Img(), opts)
