@@ -206,14 +206,17 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 			zObjects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
 		}
 
-		// NOTE: If the `zi` struct already has the `currentZ` key then
-		// that means we have an issue.
-		if _, ok := zi.Objects[currentZ]; ok {
-			log.Fatalf("Z-Index key (%d) already exists in ZIndexObject instance", currentZ)
+		// TODO: Maybe move this down a scope to the inner for that way we can maybe access
+		// it like zi.Objects[currentZ][fmt.Sprintf("%.0f,%.0f", x, y)] = object
+		if existingOjbs, ok := zi.Objects[currentZ]; ok {
+
+		} else {
+			zi.Objects[currentZ] = zObjects
 		}
 
-		zi.Objects[currentZ] = zObjects
 	}
+	ri.LayerZIndices = layerZIndices
+	zi.LayerZIndices = layerZIndices
 	return ri, zi
 }
 
