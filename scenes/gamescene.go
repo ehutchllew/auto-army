@@ -87,65 +87,13 @@ func (g *GameScene) Update() SceneId {
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
-	// Loop over all layers in the map file
-	for _, layer := range g.tileMapJson.Layers {
-		// Initialize a tileset that will contain our image data once found
-		var tileset assets.Tileset
-		// tileI equals index of the actual data in the slice
-		// tileId equals the ID of the tile on its tileset file
-		for tileI, tileId := range layer.Data {
-			// If there is no tile, then skip this iteration
-			if tileId == 0 {
-				continue
-			}
-
-			// Get associated tileset if tileset is nil
-			if tileset == nil {
-				// Loop backwards since we want to match the tile GID with
-				// the highest possible `firstgid` of the tilesets
-				for i := len(g.tilesets) - 1; i >= 0; i-- {
-					t := g.tilesets[i]
-					if tileId >= int(t.Gid()) {
-						tileset = t
-						break
-					}
-				}
-			}
-
-			// Get tile coordinates on tileset image
-			x := tileI % layer.Width
-			y := tileI / layer.Width
-
-			// Multiply by the Tilesize our game uses
-			x *= constants.Tilesize
-			y *= constants.Tilesize
-
-			img := tileset.Img(constants.ID(tileId))
-
-			// Begin translating the image coordinates for the tile image
-			opts.GeoM.Translate(float64(x), float64(y))
-			opts.GeoM.Translate(g.camera.X, g.camera.Y)
-
-			// Draw the actual tile image with the given subimage and
-			// the translated options we calculated above
-			screen.DrawImage(img, opts)
-
-			// Reset the GeoM options so we can use it again below
+	for i := 0; i < len(g.renderIndexObjs.LayerZIndices)-1; i++ {
+		objects := g.renderIndexObjs.Objects[uint8(i)]
+		for _, o := range objects {
+			opts.GeoM.Translate(o.TransCoords())
+			screen.DrawImage(o.Img(), opts)
 			opts.GeoM.Reset()
-		}
-
-		// FIXME: There's one issue here: within each "level" the objects get rendered at random z's
-		// since a map does not maintain insertion order. Could potentially have two data structs:
-		// a slice for determining z-index render order, and the map for dynamic lookup.
-		// Start at 1 for first layer and go up to and including last layer
-		for i := 0; i < len(g.renderIndexObjs.LayerZIndices)-1; i++ {
-			objects := g.renderIndexObjs.Objects[uint8(i)]
-			for _, o := range objects {
-				opts.GeoM.Translate(o.TransCoords())
-				screen.DrawImage(o.Img(), opts)
-				opts.GeoM.Reset()
-				renderBuildingBanner(o, screen, opts)
-			}
+			renderBuildingBanner(o, screen, opts)
 		}
 	}
 }
@@ -174,10 +122,67 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 			layerZIndices = append(layerZIndices, currentZ)
 		}
 
-		// These zObjects go in the ZIndexObjects struct
-		zObjects := make(map[string]entities.IEntity)
 		// Need to define tileset within this scope to ensure it resets for each layer
 		var tileset assets.Tileset
+
+		/*
+		* TILES
+		 */
+		// idx equals index of the actual data in the slice
+		// tileId equals the ID of the tile on its tileset file
+		for idx, tileId := range layer.Data {
+			// If there is no tile, then skip this iteration
+			if tileId == 0 {
+				continue
+			}
+
+			// Get associated tileset if tileset is nil
+			if tileset == nil {
+				// Loop backwards since we want to match the tile GID with
+				// the highest possible `firstgid` of the tilesets
+				for i := len(g.tilesets) - 1; i >= 0; i-- {
+					t := g.tilesets[i]
+					if tileId >= int(t.Gid()) {
+						tileset = t
+						break
+					}
+				}
+			}
+
+			// Get tile coordinates on tileset image
+			x := idx % layer.Width
+			y := idx / layer.Width
+
+			// Multiply by the Tilesize our game uses to get coords
+			x *= constants.Tilesize
+			y *= constants.Tilesize
+
+			fX := float64(x)
+			fY := float64(y)
+
+			img := tileset.Img(constants.ID(tileId))
+			tile := &entities.Tile{
+				Coordinates: components.Coordinates{
+					X: fX,
+					Y: fY,
+				},
+				Renderable: components.Renderable{
+					Image: img,
+				},
+				Transformable: components.Transformable{
+					Tx: fX,
+					Ty: fY,
+				},
+			}
+
+			ri.Objects[currentZ] = append(ri.Objects[currentZ], tile)
+		}
+
+		/*
+		* OBJECTS
+		 */
+		// These zObjects go in the ZIndexObjects struct
+		zObjects := make(map[string]entities.IEntity)
 		// Work backwards to ensure render order when adding objects to `ri`
 		for i := len(layer.Objects) - 1; i >= 0; i-- {
 			obj := layer.Objects[i]

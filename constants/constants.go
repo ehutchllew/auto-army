@@ -39,4 +39,5 @@ const (
 	BUILDING LayerObjectType = "Building"
 	CLIFF    LayerObjectType = "Cliff"
 	STAIRS   LayerObjectType = "Stairs"
+	TILE     LayerObjectType = "Tile"
 )
