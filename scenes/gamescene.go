@@ -14,6 +14,7 @@ import (
 	"github.com/ehutchllew/autoarmy/components"
 	"github.com/ehutchllew/autoarmy/constants"
 	"github.com/ehutchllew/autoarmy/entities"
+	"github.com/ehutchllew/autoarmy/services"
 	"github.com/ehutchllew/autoarmy/utils"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -21,6 +22,7 @@ import (
 )
 
 type GameScene struct {
+	*services.Cursor
 	camera          *cameras.Camera
 	renderIndexObjs *RenderIndexObjects
 	tileMapJson     *assets.TileMapJson
@@ -38,6 +40,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{}
 
 	g.drawMap(screen, &opts)
+	g.Cursor.Draw(screen)
 }
 
 func (g *GameScene) FirstLoad() {
@@ -218,8 +221,11 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 	return ri, zi
 }
 
+// TODO: Think about eliminating `FirstLoad` and putting that logic here
 func NewGameScene() *GameScene {
-	return &GameScene{}
+	return &GameScene{
+		Cursor: services.NewCursorService("./assets/ui/cursor_0.png"),
+	}
 }
 
 func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entities.IEntity, error) {
