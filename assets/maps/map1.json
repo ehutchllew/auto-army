@@ -4599,7 +4599,7 @@
                         {
                          "name":"is_spawn",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }, 
                         {
                          "name":"occupancy",
