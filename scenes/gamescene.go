@@ -175,6 +175,7 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 
 			ri.Objects[currentZ] = append(ri.Objects[currentZ], tile)
 		}
+		tileset = nil
 
 		/*
 		* OBJECTS
@@ -198,7 +199,7 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 			// Assign object and its properties to a struct
 			object, err := assignObject(obj, tileset)
 			if err != nil {
-				// FIXME: #2 in `todo.txt` (convert to tile layer)
+				// FIXME: #1 in `todo.txt` (convert to tile layer)
 				fmt.Printf("Unable to unpack object :: Error: \n %v", err)
 				continue
 			}
