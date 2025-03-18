@@ -84,7 +84,8 @@ func (g *GameScene) OnExit() {
 }
 
 func (g *GameScene) Update() SceneId {
-	panic("unimplemented")
+	g.Cursor.Update()
+	return GameSceneId
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {

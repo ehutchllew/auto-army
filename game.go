@@ -24,6 +24,7 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	g.sceneMap[g.activeSceneId].Update()
 	return nil
 }
 
