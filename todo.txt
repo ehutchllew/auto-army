@@ -1,6 +1,5 @@
-1. Load object state map on first load BUT render the objects based off of the layer to preserve z-index order.
-2. Need to think about how entitites/objects moving on the map interact with each tile.
-3. Think about abstracting the repetitive logic when creating each LayerObject entity (coords, dimensions, etc.) // still needed?
-4. Convert the elevated terrain that is NOT of type Cliff to a normal tile layer instead of object layer.
-5. Create a "layering" service that determines where moving pieces are (like soldiers), this can interact with
-the state object map to determine what things are interacting.
+1. Convert the elevated terrain that is NOT of type Cliff to a normal tile layer instead of object layer.
+2. Create a "layering" service that determines where moving pieces are (like soldiers), this can interact with
+the state object map to determine what things are interacting. Additionally, this service should keep track of the specific index at a given time, so when it does need to update the associated object it can:
+	a. update the z-index (coords key) struct.
+	b. update the render object at that tracked index with the new updated object from the z-index struct.

@@ -20,8 +20,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
-// TODO: Look into if it's possible to convert `renderIndexObjs` to a more
-// general purpose renderable data struct -- i.e. tiles and objects
 type GameScene struct {
 	camera          *cameras.Camera
 	renderIndexObjs *RenderIndexObjects
@@ -200,7 +198,7 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 			// Assign object and its properties to a struct
 			object, err := assignObject(obj, tileset)
 			if err != nil {
-				// FIXME: #4 in `todo.txt` (convert to tile layer)
+				// FIXME: #2 in `todo.txt` (convert to tile layer)
 				fmt.Printf("Unable to unpack object :: Error: \n %v", err)
 				continue
 			}
