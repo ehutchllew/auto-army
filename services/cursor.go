@@ -26,6 +26,7 @@ func (cs *Cursor) Draw(screen *ebiten.Image) {
 }
 
 func NewCursorService(imgPath string) *Cursor {
+	ebiten.SetCursorMode(ebiten.CursorModeHidden)
 	c, _, err := ebitenutil.NewImageFromFile(imgPath)
 	if err != nil {
 		fmt.Printf("Unable to parse image: %v\n", err)
