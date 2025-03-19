@@ -15,6 +15,8 @@ type Cursor struct {
 	Y int
 }
 
+// NOTE: The update and draw for the mouse seems slightly laggy -- maybe need to try
+// out `image.Point` updates versus trying to redraw the entire image.
 func (cs *Cursor) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{}
 	// The image for the cursor is a bit weird, so requires a bit of a hacky solution to align it

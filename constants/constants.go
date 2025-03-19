@@ -33,11 +33,11 @@ const (
 )
 
 // These should correlate to entities
-type LayerObjectType string
+type LayerRenderableType string
 
 const (
-	BUILDING LayerObjectType = "Building"
-	CLIFF    LayerObjectType = "Cliff"
-	STAIRS   LayerObjectType = "Stairs"
-	TILE     LayerObjectType = "Tile"
+	BUILDING LayerRenderableType = "Building"
+	CLIFF    LayerRenderableType = "Cliff"
+	STAIRS   LayerRenderableType = "Stairs"
+	TILE     LayerRenderableType = "Tile"
 )
