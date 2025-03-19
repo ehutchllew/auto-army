@@ -21,10 +21,10 @@ type LayerObject struct {
 	Gid   constants.ID
 	Id    constants.ID // So far for debugging only
 	Name  constants.LayerObjectName
-	Class constants.LayerObjectType
+	Class constants.LayerRenderableType
 }
 
-func (lo *LayerObject) Type() constants.LayerObjectType {
+func (lo *LayerObject) Type() constants.LayerRenderableType {
 	return lo.Class
 }
 

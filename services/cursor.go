@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ehutchllew/autoarmy/components"
+	"github.com/ehutchllew/autoarmy/constants"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -16,7 +17,8 @@ type Cursor struct {
 
 func (cs *Cursor) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{}
-	opts.GeoM.Translate(float64(cs.X), float64(cs.Y))
+	// The image for the cursor is a bit weird, so requires a bit of a hacky solution to align it
+	opts.GeoM.Translate(float64(cs.X)-constants.Tilesize/3, float64(cs.Y)-constants.Tilesize/3.5)
 	screen.DrawImage(cs.Renderable.Image, &opts)
 	opts.GeoM.Reset()
 }

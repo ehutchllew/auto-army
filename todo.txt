@@ -1,5 +1,6 @@
 1. Convert the elevated terrain that is NOT of type Cliff to a normal tile layer instead of object layer.
-2. Create a "layering" service that determines where moving pieces are (like soldiers), this can interact with
+2. Need to include the "invisible" boundaries of each object on the map to know when something interacts with it, including the cursor.
+3. Create a "layering" service that determines where moving pieces are (like soldiers), this can interact with
 the state object map to determine what things are interacting. Additionally, this service should keep track of the specific index at a given time, so when it does need to update the associated object it can:
 	a. update the z-index (coords key) struct.
 	b. update the render object at that tracked index with the new updated object from the z-index struct.

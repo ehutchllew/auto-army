@@ -230,7 +230,7 @@ func NewGameScene() *GameScene {
 }
 
 func assignObject(obj assets.TileMapObjectsJson, tileset assets.Tileset) (entities.IEntity, error) {
-	coercedType := constants.LayerObjectType(obj.Type)
+	coercedType := constants.LayerRenderableType(obj.Type)
 
 	switch coercedType {
 	case constants.BUILDING:
@@ -280,7 +280,7 @@ func assignBuilding(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*ent
 			Width:  obj.Width,
 		},
 		LayerObject: components.LayerObject{
-			Class: constants.LayerObjectType(obj.Type),
+			Class: constants.LayerRenderableType(obj.Type),
 			Gid:   obj.Gid,
 			Id:    obj.Id,
 			Name:  constants.LayerObjectName(obj.Name),
@@ -311,7 +311,7 @@ func assignCliff(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entiti
 			Y: obj.Y,
 		},
 		LayerObject: components.LayerObject{
-			Class: constants.LayerObjectType(obj.Type),
+			Class: constants.LayerRenderableType(obj.Type),
 			Gid:   obj.Gid,
 			Id:    obj.Id,
 			Name:  constants.LayerObjectName(obj.Name),
@@ -354,7 +354,7 @@ func assignStairs(obj assets.TileMapObjectsJson, tileset assets.Tileset) (*entit
 			Y: obj.Y,
 		},
 		LayerObject: components.LayerObject{
-			Class: constants.LayerObjectType(obj.Type),
+			Class: constants.LayerRenderableType(obj.Type),
 			Gid:   obj.Gid,
 			Id:    obj.Id,
 			Name:  constants.LayerObjectName(obj.Name),

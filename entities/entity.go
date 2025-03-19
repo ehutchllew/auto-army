@@ -9,5 +9,5 @@ type IEntity interface {
 	Coords() (float64, float64)
 	Img() *ebiten.Image
 	TransCoords() (float64, float64)
-	Type() constants.LayerObjectType
+	Type() constants.LayerRenderableType
 }

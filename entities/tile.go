@@ -11,6 +11,6 @@ type Tile struct {
 	components.Transformable
 }
 
-func (t *Tile) Type() constants.LayerObjectType {
+func (t *Tile) Type() constants.LayerRenderableType {
 	return constants.TILE
 }
