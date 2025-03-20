@@ -23,11 +23,11 @@ import (
 
 type GameScene struct {
 	*services.Cursor
-	camera          *cameras.Camera
-	renderIndexObjs *RenderIndexObjects
-	tileMapJson     *assets.TileMapJson
-	tilesets        []assets.Tileset
-	zIndexObjs      *ZIndexObjects
+	camera        *cameras.Camera
+	interactables *LayeredObjects
+	renderables   *LayeredObjects
+	tileMapJson   *assets.TileMapJson
+	tilesets      []assets.Tileset
 }
 
 var (
@@ -68,7 +68,7 @@ func (g *GameScene) FirstLoad() {
 	g.camera = cameras.NewCamera(0.0, 0.0)
 	g.tileMapJson = tileMapJson
 	g.tilesets = tilesets
-	g.renderIndexObjs, g.zIndexObjs = g.firstLoadObjectState()
+	g.renderables, g.interactables = g.firstLoadObjectState()
 }
 
 func (g *GameScene) IsLoaded() bool {
@@ -85,12 +85,18 @@ func (g *GameScene) OnExit() {
 
 func (g *GameScene) Update() SceneId {
 	g.Cursor.Update()
+	clicked := ebiten.IsMouseButtonPressed(ebiten.MouseButton0)
+	if clicked {
+		cX, cY := g.Cursor.Position()
+		fmt.Printf("\nMouse Clicked::(%d,%d)\n", cX, cY)
+		g.processMouseClick(float64(cX), float64(cY))
+	}
 	return GameSceneId
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
-	for i := 0; i < len(g.renderIndexObjs.LayerZIndices)-1; i++ {
-		objects := g.renderIndexObjs.Objects[uint8(i)]
+	for i := 0; i < len(g.renderables.LayerZIndices)-1; i++ {
+		objects := g.renderables.Objects[uint8(i)]
 		for _, o := range objects {
 			opts.GeoM.Translate(o.TransCoords())
 			screen.DrawImage(o.Img(), opts)
@@ -100,14 +106,13 @@ func (g *GameScene) drawMap(screen *ebiten.Image, opts *ebiten.DrawImageOptions)
 	}
 }
 
-func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects) {
+func (g *GameScene) firstLoadObjectState() (*LayeredObjects, *LayeredObjects) {
 	layerZIndices := make([]uint8, len(g.tileMapJson.Layers))
-
-	var ri = &RenderIndexObjects{
+	renderables := &LayeredObjects{
 		Objects: make(map[uint8][]entities.IEntity),
 	}
-	var zi = &ZIndexObjects{
-		Objects: make(map[uint8]map[string]entities.IEntity),
+	interactables := &LayeredObjects{
+		Objects: make(map[uint8][]entities.IEntity),
 	}
 
 	for _, layer := range g.tileMapJson.Layers {
@@ -177,15 +182,13 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 				},
 			}
 
-			ri.Objects[currentZ] = append(ri.Objects[currentZ], tile)
+			renderables.Objects[currentZ] = append(renderables.Objects[currentZ], tile)
 		}
 		tileset = nil
 
 		/*
 		* OBJECTS
 		 */
-		// These zObjects go in the ZIndexObjects struct
-		zObjects := make(map[string]entities.IEntity)
 		// Work backwards to ensure render order when adding objects to `ri`
 		for i := len(layer.Objects) - 1; i >= 0; i-- {
 			obj := layer.Objects[i]
@@ -204,22 +207,32 @@ func (g *GameScene) firstLoadObjectState() (*RenderIndexObjects, *ZIndexObjects)
 			object, err := assignObject(obj, tileset)
 			if err != nil {
 				// FIXME: #1 in `todo.txt` (convert to tile layer)
-				fmt.Printf("Unable to unpack object :: Error: \n %v", err)
+				// fmt.Printf("Unable to unpack object :: Error: \n %v", err)
 				continue
 			}
 
-			ri.Objects[currentZ] = append(ri.Objects[currentZ], object)
-
-			x, y := object.Coords()
-			zObjects[fmt.Sprintf("%.0f,%.0f", x, y)] = object
+			renderables.Objects[currentZ] = append(renderables.Objects[currentZ], object)
+			interactables.Objects[currentZ] = append(interactables.Objects[currentZ], object)
 		}
-
-		zi.Objects[currentZ] = zObjects
-
 	}
-	ri.LayerZIndices = layerZIndices
-	zi.LayerZIndices = layerZIndices
-	return ri, zi
+	renderables.LayerZIndices = layerZIndices
+	interactables.LayerZIndices = layerZIndices
+	return renderables, interactables
+}
+
+func (g *GameScene) processMouseClick(x, y float64) {
+	// Looping over the layer keys
+LOOP:
+	for _, z := range g.interactables.Objects {
+		// Looping over the layer keys' objects
+		for _, o := range z {
+			oX, oY := o.TransCoords()
+			if x >= oX && x <= oX+float64(o.Img().Bounds().Dx()) && y >= oY && y <= oY+float64(o.Img().Bounds().Dy()) {
+				fmt.Printf("CLICKED ON THIS OBJECT --> %+v\n", o)
+				break LOOP
+			}
+		}
+	}
 }
 
 // TODO: Think about eliminating `FirstLoad` and putting that logic here
