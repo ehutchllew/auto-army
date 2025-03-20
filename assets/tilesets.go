@@ -38,9 +38,8 @@ type UniformTilesetJson struct {
 }
 
 type DynamicTileset struct {
-	Collider *image.Rectangle
-	gid      constants.ID
-	imgs     []*ebiten.Image
+	gid  constants.ID
+	imgs []*ebiten.Image
 }
 
 type DynamicTilesetTile struct {
